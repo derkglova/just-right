@@ -1,18 +1,14 @@
 run = "python src/main.py"
 entrypoint = "src/main.py"
-modules = ["python-3.11"]
+modules = ["python-3.12"]
+
+[nix]
+channel = "stable-25_05"
 
 [deployment]
 run = ["python", "src/main.py"]
-
-[userenv]
-
-[userenv.shared]
-
-[[ports]]
-localPort = 5000
-externalPort = 80
+deploymentTarget = "gce"
 
 [[ports]]
 localPort = 8080
-externalPort = 8080
+externalPort = 80
