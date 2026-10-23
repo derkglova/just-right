@@ -1,12 +1,12 @@
-run = "python src/main.py"
-entrypoint = "src/main.py"
+run = "python src/backend/main.py"
+entrypoint = "src/backend/main.py"
 modules = ["python-3.12"]
 
 [nix]
 channel = "stable-25_05"
 
 [deployment]
-run = ["python", "src/main.py"]
+run = ["python", "src/backend/main.py"]
 deploymentTarget = "gce"
 build = ["uv", "sync", "--frozen"]
 

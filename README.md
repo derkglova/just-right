@@ -57,15 +57,18 @@ Staff log leftovers at closing in Telegram (about 30 seconds). Just Right learns
 ├── scripts/
 │   └── generate_data.py     # Creates the synthetic sales history
 ├── src/
-│   ├── main.py              # Entry point: dashboard + bot
-│   ├── planner.py           # Bake-quantity logic (newsvendor model)
-│   ├── bot.py               # Telegram bot
-│   ├── db.py                # SQLite storage
-│   ├── templates/           # Dashboard page
-│   └── data/                # Simulated Orbyte data (items, shop, sales history)
+│   ├── backend/
+│   │   ├── main.py          # Entry point: dashboard + JSON API + bot + scheduler
+│   │   ├── planner.py       # Bake-quantity logic (newsvendor model)
+│   │   ├── bot.py           # Telegram bot
+│   │   ├── db.py            # SQLite storage
+│   │   ├── scheduler.py     # Daily timers (plan, closing count, bake list)
+│   │   └── data/            # Simulated Orbyte data (items, shop, sales history)
+│   └── frontend/            # Manager dashboard (served by main.py)
 ├── submission/              # Required submission PDFs
 ├── tests/
-│   └── test_planner.py
+│   ├── test_planner.py
+│   └── test_db.py
 ├── .env.example
 ├── .gitignore
 ├── .replit
@@ -96,7 +99,7 @@ Orbyte is simulated with synthetic data. In a real deployment, sales, costs and 
 ### Option 1: Run on Replit (recommended)
 1. Import this repository into Replit (Create Repl → Import from GitHub).
 2. Open the Secrets tab and add the variables listed in `.env.example`.
-3. Click Run. Replit uses `.replit` to start `python src/main.py`.
+3. Click Run. Replit uses `.replit` to start `python src/backend/main.py`.
 
 ### Option 2: Run locally
 ```bash
@@ -106,7 +109,7 @@ python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 uv sync                         # or: pip install flask==3.0.3 pyTelegramBotAPI==4.21.0 APScheduler==3.10.4 python-dotenv==1.0.1
 cp .env.example .env            # then fill in your values
-python src/main.py
+python src/backend/main.py
 ```
 
 ### Run tests

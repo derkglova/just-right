@@ -3,7 +3,7 @@
 Tables:
     plans(id, plan_date, item_id, item_name, usual, recommended, final, reason,
           status, decided_by, decided_at)
-    daily_sales(date, item_id, baked, sold, leftover, sold_out_bucket)
+    daily_sales(date, item_id, baked, sold, leftover, sold_out_bucket, source)
     activity_log(id, ts, actor_name, role, action, details)
     settings(key, value)   -- e.g. plan_time, close_time ("HH:MM", set from the dashboard)
 
@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS daily_sales (
     sold            INTEGER NOT NULL,
     leftover        INTEGER NOT NULL,
     sold_out_bucket TEXT,
+    source          TEXT NOT NULL DEFAULT 'sample',   -- 'sample' (generated) or 'count' (staff on Telegram)
     PRIMARY KEY (date, item_id)
 );
 CREATE TABLE IF NOT EXISTS activity_log (
@@ -66,6 +67,10 @@ CREATE TABLE IF NOT EXISTS settings (
 DEFAULT_SETTINGS = {
     "plan_time": os.environ.get("PLAN_TIME", "14:00"),    # send tomorrow's plan to the manager
     "close_time": os.environ.get("CLOSE_TIME", "18:00"),  # ask staff for the closing count
+    "baker_time": "20:00",                                # send the approved bake list to the baker
+    "close_auto": "1",                                    # "1" = timer on, "0" = off
+    "baker_auto": "1",
+    "bake_list_sent_for": "",                             # plan date whose bake list was last sent
 }
 
 
@@ -89,10 +94,18 @@ def init() -> None:
     """Create the tables, and load the sample sales history the first time."""
     with connect() as conn:
         conn.executescript(SCHEMA)
+        # Databases made before the 'source' column existed: add it.
+        columns = [row["name"] for row in conn.execute("PRAGMA table_info(daily_sales)")]
+        if "source" not in columns:
+            conn.execute("ALTER TABLE daily_sales ADD COLUMN source TEXT NOT NULL DEFAULT 'sample'")
+            # Days that aren't in the sample file were counted by staff.
+            sample_dates = sorted({r["date"] for r in json.loads(SALES_JSON.read_text())})
+            conn.execute("UPDATE daily_sales SET source = 'count' WHERE date > ?", (sample_dates[-1],))
         if conn.execute("SELECT COUNT(*) FROM daily_sales").fetchone()[0] == 0:
             rows = json.loads(SALES_JSON.read_text())
             conn.executemany(
-                "INSERT INTO daily_sales VALUES (:date, :item, :baked, :sold, :leftover, :sold_out_bucket)",
+                "INSERT INTO daily_sales (date, item_id, baked, sold, leftover, sold_out_bucket, source)"
+                " VALUES (:date, :item, :baked, :sold, :leftover, :sold_out_bucket, 'sample')",
                 rows,
             )
 
@@ -110,7 +123,8 @@ def save_count(day: str, item_id: str, baked: int, leftover: int, sold_out_bucke
     """Save one item's closing count. Counting again the same day replaces it."""
     with connect() as conn:
         conn.execute(
-            "INSERT OR REPLACE INTO daily_sales VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT OR REPLACE INTO daily_sales (date, item_id, baked, sold, leftover, sold_out_bucket, source)"
+            " VALUES (?, ?, ?, ?, ?, ?, 'count')",
             (day, item_id, baked, max(baked - leftover, 0), leftover, sold_out_bucket),
         )
 
@@ -130,6 +144,100 @@ def weekly_waste(costs: dict) -> list[dict]:
         week["waste_rm"] = round(week["waste_rm"], 2)
         week["days"] = len(week["days"])   # first and last week may be partial
     return sorted(weeks.values(), key=lambda w: w["week_start"])
+
+
+# Rough time of day for each sell-out bucket, for the dashboard's sell-out chart.
+BUCKET_TIME = {"before_12": "11:00", "12_2": "13:00", "2_4": "15:00", "after_4": "17:00"}
+
+
+def waste_summary(items: list[dict]) -> dict:
+    """Waste and sell-outs for the dashboard. "This week" = the last 7 days with data,
+    "last week" = the 7 days before that, then earlier weeks for the chart."""
+    rows = sales_history()
+    if not rows:
+        return {"this_week": [], "sellouts": [], "last_week_sellouts": 0, "weekly": []}
+    last_day = date.fromisoformat(rows[-1]["date"])
+    names = {i["id"]: i["name"] for i in items}
+    costs = {i["id"]: i["cost"] for i in items}
+
+    def week_index(row):   # 0 = this week, 1 = last week, ...
+        return (last_day - date.fromisoformat(row["date"])).days // 7
+
+    this_week = []
+    for item in items:
+        mine = [r for r in rows if r["item_id"] == item["id"]]
+        this_week.append({
+            "item": item["name"],
+            "cost": item["cost"],
+            "leftovers": sum(r["leftover"] for r in mine if week_index(r) == 0),
+            "last_week": sum(r["leftover"] for r in mine if week_index(r) == 1),
+        })
+
+    sellouts = [
+        {"item": names.get(r["item_id"], r["item_id"]),
+         "day": date.fromisoformat(r["date"]).strftime("%a"),
+         "time": BUCKET_TIME.get(r["sold_out_bucket"], "17:00")}
+        for r in rows if week_index(r) == 0 and r["leftover"] == 0 and r["sold_out_bucket"]
+    ]
+    last_week_sellouts = sum(1 for r in rows if week_index(r) == 1 and r["leftover"] == 0 and r["sold_out_bucket"])
+
+    # Older full weeks (2+ weeks ago), oldest first, labelled by their first day.
+    weekly = []
+    for n in range(max(week_index(r) for r in rows), 1, -1):
+        week = [r for r in rows if week_index(r) == n]
+        if len({r["date"] for r in week}) < 7:
+            continue   # skip a partial week at the start of the data
+        start = last_day - timedelta(days=7 * n + 6)
+        weekly.append({"week": f"{start.day} {start.strftime('%b')}",
+                       "rm": round(sum(r["leftover"] * costs.get(r["item_id"], 0) for r in week), 2)})
+
+    return {"this_week": this_week, "sellouts": sellouts,
+            "last_week_sellouts": last_week_sellouts, "weekly": weekly}
+
+
+def daily_records(items: list[dict], days: int = 30) -> list[dict]:
+    """Day by day, newest first: that day's plan and closing count side by side, with totals.
+    items gives names and costs (from items.json)."""
+    names = {i["id"]: i["name"] for i in items}
+    costs = {i["id"]: i["cost"] for i in items}
+    with connect() as conn:
+        dates = [r[0] for r in conn.execute(
+            "SELECT date FROM daily_sales UNION SELECT plan_date FROM plans ORDER BY 1 DESC LIMIT ?", (days,))]
+        sales = [dict(r) for r in conn.execute(
+            "SELECT * FROM daily_sales WHERE date >= ?", (dates[-1] if dates else "",))]
+
+    records = []
+    for day in dates:
+        plan = {p["item_id"]: p for p in get_plan(day)}
+        counted = {s["item_id"]: s for s in sales if s["date"] == day}
+        rows = []
+        for item_id in list(names) + [i for i in {**plan, **counted} if i not in names]:
+            p, c = plan.get(item_id), counted.get(item_id)
+            if not p and not c:
+                continue
+            rows.append({
+                "item": names.get(item_id) or (p or {}).get("item_name", item_id),
+                "planned": p["final"] if p else None,
+                "recommended": p["recommended"] if p else None,
+                "baked": c["baked"] if c else None,
+                "sold": c["sold"] if c else None,
+                "leftover": c["leftover"] if c else None,
+                "sold_out": BUCKET_TIME.get(c["sold_out_bucket"]) if c and c["leftover"] == 0 else None,
+                "waste_rm": round(c["leftover"] * costs.get(item_id, 0), 2) if c else None,
+            })
+        first_plan = next(iter(plan.values()), None)
+        records.append({
+            "date": day,
+            "counted": bool(counted),
+            "source": "count" if any(c["source"] == "count" for c in counted.values()) else ("sample" if counted else None),
+            "plan": {"status": first_plan["status"], "approved_by": first_plan["decided_by"],
+                     "approved_at": first_plan["decided_at"]} if first_plan else None,
+            "items": rows,
+            "leftover": sum(r["leftover"] or 0 for r in rows),
+            "waste_rm": round(sum(r["waste_rm"] or 0 for r in rows), 2),
+            "sellouts": sum(1 for r in rows if r["sold_out"]),
+        })
+    return records
 
 
 # ---- Plans ----
@@ -163,6 +271,15 @@ def edit_item(plan_date: str, item_id: str, final: int, reason: str) -> None:
         conn.execute(
             "UPDATE plans SET final = ?, reason = ? WHERE plan_date = ? AND item_id = ?",
             (final, reason, plan_date, item_id),
+        )
+
+
+def reopen_plan(plan_date: str) -> None:
+    """Back to pending, e.g. after an approved plan is edited, so it must be approved again."""
+    with connect() as conn:
+        conn.execute(
+            "UPDATE plans SET status = 'pending', decided_by = NULL, decided_at = NULL WHERE plan_date = ?",
+            (plan_date,),
         )
 
 

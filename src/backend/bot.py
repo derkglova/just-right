@@ -331,23 +331,41 @@ def handle_approve(call):
     if plan is None:
         return
 
-    manager = name_of(call.from_user)
-    db.approve_plan(plan_date, manager)
-    plan = db.get_plan(plan_date)
-    db.log(manager, "manager", "Plan approved", f"Plan for {plan_date}: " + ", ".join(
-        f"{p['item_name']} {p['final']}" for p in plan))
-
     answer(call, "Plan approved.")
+    plan = approve_plan(plan_date, name_of(call.from_user))
     # Replace the buttons with the final status so nobody taps twice.
     bot.edit_message_text(plan_text(plan), call.message.chat.id, call.message.message_id)
 
+
+def approve_plan(plan_date: str, approver: str) -> list[dict]:
+    """Approve a plan and send the bake list to the baker. Used by Telegram and the dashboard."""
+    db.approve_plan(plan_date, approver)
+    plan = db.get_plan(plan_date)
+    db.log(approver, "manager", "Plan approved", f"Plan for {plan_date}: " + ", ".join(
+        f"{p['item_name']} {p['final']}" for p in plan))
+    send_bake_list(plan_date)
+    return plan
+
+
+def send_bake_list(plan_date: str = None, skip_if_sent: bool = False) -> str:
+    """Send an approved plan's bake list to the baker. Returns "" if sent, or why it wasn't.
+    skip_if_sent: used by the daily timer, so a list already sent on approval isn't sent twice."""
+    plan = db.get_plan(plan_date) if plan_date else db.latest_plan()
+    if not plan or plan[0]["status"] != "approved":
+        return "Approve the plan first."
+    if skip_if_sent and db.get_setting("bake_list_sent_for") == plan[0]["plan_date"]:
+        return "Already sent."
     try:
         bot.send_message(BAKER_ID, bake_list_text(plan))
-        db.log("Just Right", "system", "Bake list sent", f"Bake list for {plan_date} sent to the baker")
-    except ApiTelegramException:
-        # Telegram won't let a bot message someone who never opened it.
-        bot.send_message(call.message.chat.id,
-                         "Couldn't send the bake list: the baker needs to open the bot and press Start first.")
+    except ApiTelegramException as e:
+        # Usually: Telegram won't let a bot message someone who never opened it.
+        problem = "Couldn't send the bake list: the baker needs to open the bot and press Start first."
+        print(f"Bake list to {BAKER_ID} failed: {e.description}")   # the exact reason, in the server log
+        bot.send_message(MANAGER_ID, problem)
+        return problem
+    db.set_setting("bake_list_sent_for", plan[0]["plan_date"])
+    db.log("Just Right", "system", "Bake list sent", f"Bake list for {plan[0]['plan_date']} sent to the baker")
+    return ""
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("edit:"))

@@ -1,14 +1,14 @@
 """Generate synthetic sales history for the demo (simulated Orbyte POS data).
 
 Run:  python scripts/generate_data.py
-Writes src/data/sales_history.json. Fixed seed, so the output is the same every time.
+Writes src/backend/data/sales_history.json. Fixed seed, so the output is the same every time.
 """
 import json
 import random
 from datetime import date, timedelta
 from pathlib import Path
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "src" / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent / "src" / "backend" / "data"
 OPEN_HOUR, CLOSE_HOUR = 8, 18  # shop opens 8 AM, closes 6 PM
 DAYS = 28
 END_DATE = date(2026, 10, 22)  # last day of history (Thursday)
