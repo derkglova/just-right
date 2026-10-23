@@ -47,6 +47,18 @@ class TestDb(unittest.TestCase):
         self.assertEqual(len(plan), 1)
         self.assertEqual(plan[0]["final"], 41)
 
+    def test_settings_default_then_saved(self):
+        self.assertEqual(db.get_setting("close_time"), db.DEFAULT_SETTINGS["close_time"])
+        db.set_setting("close_time", "17:30")
+        self.assertEqual(db.get_setting("close_time"), "17:30")
+
+    def test_closing_count_saved_and_replaced(self):
+        db.save_count("2026-10-23", "croissant", 43, 5)
+        db.save_count("2026-10-23", "croissant", 43, 0, "2_4")   # counted again: replaces
+        rows = [r for r in db.sales_history() if r["date"] == "2026-10-23"]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual((rows[0]["sold"], rows[0]["leftover"], rows[0]["sold_out_bucket"]), (43, 0, "2_4"))
+
     def test_log_newest_first(self):
         db.log("Derek", "manager", "Plan sent", "first")
         db.log("Aina", "staff", "Blocked", "second")

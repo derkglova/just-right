@@ -4,7 +4,7 @@ Each person only sees their own role's commands (set by Telegram ID in .env):
 - everyone: /start  says hello; unknown users get their ID to send to the manager.
 - manager:  /plan   tomorrow's plan with [Approve] and [Edit] buttons.
 - baker:    /bakelist  the approved bake list.
-- staff:    /count  closing count (next step).
+- staff:    /count  closing count: leftovers per item, and when sold-out items ran out.
 
 Only the manager can use the Approve and Edit buttons.
 On approve, the bake list goes to the baker. Plans and every action are saved in
@@ -37,8 +37,14 @@ STATUS_LABEL = {"pending": "Pending approval", "approved": "Approved"}
 ROLE_COMMANDS = {
     "manager": [BotCommand("plan", "See tomorrow's plan and approve or edit it")],
     "baker": [BotCommand("bakelist", "See the approved bake list")],
-    "staff": [],   # /count (closing count) comes in the next step
+    "staff": [BotCommand("count", "Closing count: enter today's leftovers")],
 }
+
+# Sell-out time buckets (keys match SOLD_OUT_UPLIFT in planner.py).
+SOLD_OUT_BUCKETS = {"before_12": "Before 12", "12_2": "12-2 PM", "2_4": "2-4 PM", "after_4": "After 4 PM"}
+
+# Closing counts in progress, one per chat: {chat_id: {"date", "items", "index", "results"}}
+counts = {}
 
 
 def is_manager(user_id: int) -> bool:
@@ -168,8 +174,6 @@ def handle_start(message):
     lines = [f"Hi! I'm Just Right. You're set up as: {', '.join(roles)}.", ""]
     for command in commands_for(user_id)[1:]:   # skip /start itself
         lines.append(f"/{command.command} - {command.description}")
-    if roles == ["staff"]:
-        lines.append("The closing count is coming soon.")
     bot.reply_to(message, "\n".join(lines))
 
 
@@ -197,6 +201,127 @@ def handle_bakelist(message):
 def bake_list_text(plan: list[dict]) -> str:
     items = "\n".join(f"{p['item_name']}: {p['final']}" for p in plan)
     return f"Approved bake list for {plan[0]['plan_date']}:\n\n{items}"
+
+
+# ---- Closing count (staff) ----
+
+def count_recipients() -> set[int]:
+    """Who does the closing count: the staff, or the manager if no staff are set."""
+    return STAFF_IDS or {MANAGER_ID}
+
+
+def start_count(actor_name: str = "Scheduler", role: str = "system") -> int:
+    """Ask everyone who counts to do the closing count now. Returns how many got the message."""
+    sent = 0
+    for chat_id in count_recipients():
+        try:
+            begin_count(chat_id)
+            sent += 1
+        except ApiTelegramException as e:
+            # Telegram won't let a bot message someone who never opened it.
+            print(f"Could not start the count for {chat_id}: {e.description}")
+    db.log(actor_name, role, "Count requested", f"Closing count sent to {sent} staff")
+    return sent
+
+
+def begin_count(chat_id: int) -> None:
+    today = datetime.now(TZ).date().isoformat()
+    # How many were baked today: the approved plan if there is one, else the usual batch.
+    plan = db.get_plan(today)
+    baked = {p["item_id"]: p["final"] for p in plan if p["status"] == "approved"}
+    items, _ = load_data()
+    counts[chat_id] = {
+        "date": today,
+        "items": [{"id": i["id"], "name": i["name"], "baked": baked.get(i["id"], i["usual_batch"])} for i in items],
+        "index": 0,
+        "results": [],
+    }
+    bot.send_message(chat_id, f"Shop's closed! Time for the closing count ({today}).")
+    ask_next_item(chat_id)
+
+
+def ask_next_item(chat_id: int, user=None) -> None:
+    state = counts[chat_id]
+    if state["index"] == len(state["items"]):
+        finish_count(chat_id, user)
+        return
+    item = state["items"][state["index"]]
+    prompt = bot.send_message(chat_id, f"{item['name']} (baked {item['baked']}): how many are left? Send a number.")
+    bot.register_next_step_handler(prompt, receive_leftover)
+
+
+def receive_leftover(message):
+    chat_id = message.chat.id
+    state = counts.get(chat_id)
+    if state is None:
+        return
+    text = (message.text or "").strip()
+    if text.startswith("/"):
+        del counts[chat_id]
+        bot.reply_to(message, "Count stopped. Send /count to start again.")
+        return
+
+    item = state["items"][state["index"]]
+    if not text.isdigit() or int(text) > item["baked"]:
+        prompt = bot.reply_to(message, f"Please send a number from 0 to {item['baked']}.")
+        bot.register_next_step_handler(prompt, receive_leftover)
+        return
+
+    leftover = int(text)
+    if leftover == 0:
+        markup = InlineKeyboardMarkup()
+        markup.row(*[InlineKeyboardButton(label, callback_data=f"soldout:{key}")
+                     for key, label in SOLD_OUT_BUCKETS.items()])
+        bot.send_message(chat_id, f"{item['name']} sold out. Roughly when?", reply_markup=markup)
+        return   # the answer comes from handle_sold_out below
+
+    state["results"].append({**item, "leftover": leftover, "bucket": None})
+    state["index"] += 1
+    ask_next_item(chat_id, message.from_user)
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith("soldout:"))
+def handle_sold_out(call):
+    chat_id = call.message.chat.id
+    state = counts.get(chat_id)
+    if state is None or state["index"] == len(state["items"]):
+        answer(call, "No count in progress. Send /count to start.")
+        return
+
+    bucket = call.data.split(":", 1)[1]
+    item = state["items"][state["index"]]
+    state["results"].append({**item, "leftover": 0, "bucket": bucket})
+    state["index"] += 1
+    answer(call)
+    # Replace the buttons with the answer so they can't be tapped twice.
+    bot.edit_message_text(f"{item['name']} sold out: {SOLD_OUT_BUCKETS[bucket]}", chat_id, call.message.message_id)
+    ask_next_item(chat_id, call.from_user)
+
+
+def finish_count(chat_id: int, user) -> None:
+    state = counts.pop(chat_id)
+    lines = []
+    for r in state["results"]:
+        db.save_count(state["date"], r["id"], r["baked"], r["leftover"], r["bucket"])
+        if r["bucket"]:
+            lines.append(f"{r['name']}: sold out ({SOLD_OUT_BUCKETS[r['bucket']]})")
+        else:
+            lines.append(f"{r['name']}: {r['leftover']} left")
+    summary = "\n".join(lines)
+
+    name = name_of(user) if user else "Staff"
+    db.log(name, role_of(user) if user else "staff", "Closing count", summary.replace("\n", ", "))
+    bot.send_message(chat_id, f"Thanks! Saved the closing count for {state['date']}:\n\n{summary}")
+    if chat_id != MANAGER_ID:
+        bot.send_message(MANAGER_ID, f"Closing count from {name} ({state['date']}):\n\n{summary}")
+
+
+@bot.message_handler(commands=["count"])
+def handle_count(message):
+    if message.from_user.id not in count_recipients():
+        bot.reply_to(message, "Only staff can do the closing count.")
+        return
+    begin_count(message.chat.id)
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("approve:"))
