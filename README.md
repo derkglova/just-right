@@ -70,7 +70,7 @@ Staff log leftovers at closing in Telegram (about 30 seconds). Just Right learns
 ├── .gitignore
 ├── .replit
 ├── LICENSE
-├── requirements.txt
+├── pyproject.toml           # Python dependencies (uv)
 └── README.md
 ```
 
@@ -104,7 +104,7 @@ git clone TODO
 cd just-right
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+uv sync                         # or: pip install flask==3.0.3 pyTelegramBotAPI==4.21.0 APScheduler==3.10.4 python-dotenv==1.0.1
 cp .env.example .env            # then fill in your values
 python src/main.py
 ```
