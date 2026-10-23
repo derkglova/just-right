@@ -277,7 +277,12 @@ def save_edit(message, plan_date: str, item_id: str):
 
 
 def run() -> None:
-    set_all_menus()
+    try:
+        set_all_menus()
+    except Exception as e:
+        # The menus are a nice-to-have; never let them stop the bot from starting.
+        print(f"Could not set command menus: {e}")
+    print("Telegram bot polling started.")
     # skip_pending: ignore messages and taps sent while the bot was offline.
     bot.infinity_polling(skip_pending=True)
 
