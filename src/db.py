@@ -15,7 +15,7 @@ import json
 import os
 import sqlite3
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -93,6 +93,23 @@ def sales_history() -> list[dict]:
     with connect() as conn:
         rows = conn.execute("SELECT * FROM daily_sales ORDER BY date").fetchall()
     return [{**dict(r), "item": r["item_id"]} for r in rows]
+
+
+def weekly_waste(costs: dict) -> list[dict]:
+    """Leftovers per week (Monday to Sunday), in units and in RM.
+    costs maps item_id -> ingredient cost of one unit."""
+    weeks = {}
+    for row in sales_history():
+        day = date.fromisoformat(row["date"])
+        monday = (day - timedelta(days=day.weekday())).isoformat()
+        week = weeks.setdefault(monday, {"week_start": monday, "days": set(), "leftover_units": 0, "waste_rm": 0.0})
+        week["days"].add(row["date"])
+        week["leftover_units"] += row["leftover"]
+        week["waste_rm"] += row["leftover"] * costs.get(row["item_id"], 0)
+    for week in weeks.values():
+        week["waste_rm"] = round(week["waste_rm"], 2)
+        week["days"] = len(week["days"])   # first and last week may be partial
+    return sorted(weeks.values(), key=lambda w: w["week_start"])
 
 
 # ---- Plans ----

@@ -1,10 +1,12 @@
 """Telegram bot (pyTelegramBotAPI).
 
-Commands:
-- /start: say hello and show the user their Telegram ID (handy for filling in .env).
-- /plan:  send tomorrow's plan right now (for demos).
+Each person only sees their own role's commands (set by Telegram ID in .env):
+- everyone: /start  says hello; unknown users get their ID to send to the manager.
+- manager:  /plan   tomorrow's plan with [Approve] and [Edit] buttons.
+- baker:    /bakelist  the approved bake list.
+- staff:    /count  closing count (next step).
 
-The plan message has [Approve] and [Edit] buttons. Only the manager can use them.
+Only the manager can use the Approve and Edit buttons.
 On approve, the bake list goes to the baker. Plans and every action are saved in
 the database (db.py), so they survive a restart and show up in the activity log.
 """
@@ -15,7 +17,7 @@ from zoneinfo import ZoneInfo
 import telebot
 from dotenv import load_dotenv
 from telebot.apihelper import ApiTelegramException
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+from telebot.types import BotCommand, BotCommandScopeChat, InlineKeyboardButton, InlineKeyboardMarkup
 
 import db
 from planner import load_data, make_plan
@@ -24,19 +26,63 @@ load_dotenv()
 
 TZ = ZoneInfo(os.environ.get("TZ", "Asia/Kuala_Lumpur"))
 MANAGER_ID = int(os.environ["MANAGER_TELEGRAM_ID"])
-BAKER_ID = int(os.environ.get("BAKER_TELEGRAM_ID") or MANAGER_ID)
+BAKER_ID = int(os.environ.get("BAKER_TELEGRAM_ID") or MANAGER_ID)   # no baker set: manager gets the list
+STAFF_IDS = {int(x) for x in os.environ.get("STAFF_TELEGRAM_IDS", "").split(",") if x.strip()}
 
 bot = telebot.TeleBot(os.environ["TELEGRAM_TOKEN"])
 
 STATUS_LABEL = {"pending": "Pending approval", "approved": "Approved"}
+
+# What each role can do. This drives /start and the "/" command menu.
+ROLE_COMMANDS = {
+    "manager": [BotCommand("plan", "See tomorrow's plan and approve or edit it")],
+    "baker": [BotCommand("bakelist", "See the approved bake list")],
+    "staff": [],   # /count (closing count) comes in the next step
+}
 
 
 def is_manager(user_id: int) -> bool:
     return user_id == MANAGER_ID
 
 
+def roles_of(user_id: int) -> list[str]:
+    """One person can have several roles (e.g. in testing, the same ID everywhere)."""
+    roles = []
+    if user_id == MANAGER_ID:
+        roles.append("manager")
+    if user_id == BAKER_ID:
+        roles.append("baker")
+    if user_id in STAFF_IDS:
+        roles.append("staff")
+    return roles
+
+
 def role_of(user) -> str:
-    return "manager" if is_manager(user.id) else "staff"
+    """The main role, for the activity log."""
+    roles = roles_of(user.id)
+    return roles[0] if roles else "unknown"
+
+
+def commands_for(user_id: int) -> list[BotCommand]:
+    commands = [BotCommand("start", "What I can do for you")]
+    for role in roles_of(user_id):
+        commands += ROLE_COMMANDS[role]
+    return commands
+
+
+def set_menu(user_id: int) -> None:
+    """Show this person only their own commands when they type "/"."""
+    try:
+        bot.set_my_commands(commands_for(user_id), scope=BotCommandScopeChat(user_id))
+    except ApiTelegramException as e:
+        # Happens if they never opened the bot. They get their menu when they send /start.
+        print(f"Could not set the menu for {user_id}: {e.description}")
+
+
+def set_all_menus() -> None:
+    bot.set_my_commands([BotCommand("start", "What I can do for you")])   # everyone else
+    for user_id in {MANAGER_ID, BAKER_ID, *STAFF_IDS}:
+        set_menu(user_id)
 
 
 def name_of(user) -> str:
@@ -106,18 +152,51 @@ def check_can_change(call, plan_date: str, action: str):
 
 @bot.message_handler(commands=["start"])
 def handle_start(message):
-    bot.reply_to(
-        message,
-        "Hi! I'm Just Right. I suggest how many of each item to bake tomorrow.\n"
-        f"Your Telegram ID is {message.from_user.id}.\n\n"
-        "/plan - send tomorrow's plan now",
-    )
+    user_id = message.from_user.id
+    roles = roles_of(user_id)
+    set_menu(user_id)
+
+    if not roles:
+        bot.reply_to(
+            message,
+            "Hi! I'm Just Right, the bakery's planning bot.\n"
+            "You're not set up yet. Send this ID to your manager:\n"
+            f"{user_id}",
+        )
+        return
+
+    lines = [f"Hi! I'm Just Right. You're set up as: {', '.join(roles)}.", ""]
+    for command in commands_for(user_id)[1:]:   # skip /start itself
+        lines.append(f"/{command.command} - {command.description}")
+    if roles == ["staff"]:
+        lines.append("The closing count is coming soon.")
+    bot.reply_to(message, "\n".join(lines))
 
 
 @bot.message_handler(commands=["plan"])
 def handle_plan(message):
     user = message.from_user
+    if not is_manager(user.id):
+        bot.reply_to(message, "Only the manager can see and approve the plan.")
+        return
     send_plan(message.chat.id, name_of(user), role_of(user))
+
+
+@bot.message_handler(commands=["bakelist"])
+def handle_bakelist(message):
+    if "baker" not in roles_of(message.from_user.id):
+        bot.reply_to(message, "Only the baker can see the bake list.")
+        return
+    plan = db.latest_plan()
+    if not plan or plan[0]["status"] != "approved":
+        bot.reply_to(message, "No approved bake list yet. You'll get it here as soon as the manager approves.")
+        return
+    bot.reply_to(message, bake_list_text(plan))
+
+
+def bake_list_text(plan: list[dict]) -> str:
+    items = "\n".join(f"{p['item_name']}: {p['final']}" for p in plan)
+    return f"Approved bake list for {plan[0]['plan_date']}:\n\n{items}"
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("approve:"))
@@ -130,7 +209,6 @@ def handle_approve(call):
     manager = name_of(call.from_user)
     db.approve_plan(plan_date, manager)
     plan = db.get_plan(plan_date)
-    bake_list = "\n".join(f"{p['item_name']}: {p['final']}" for p in plan)
     db.log(manager, "manager", "Plan approved", f"Plan for {plan_date}: " + ", ".join(
         f"{p['item_name']} {p['final']}" for p in plan))
 
@@ -138,8 +216,13 @@ def handle_approve(call):
     # Replace the buttons with the final status so nobody taps twice.
     bot.edit_message_text(plan_text(plan), call.message.chat.id, call.message.message_id)
 
-    bot.send_message(BAKER_ID, f"Approved bake list for {plan_date}:\n\n{bake_list}")
-    db.log("Just Right", "system", "Bake list sent", f"Bake list for {plan_date} sent to the baker")
+    try:
+        bot.send_message(BAKER_ID, bake_list_text(plan))
+        db.log("Just Right", "system", "Bake list sent", f"Bake list for {plan_date} sent to the baker")
+    except ApiTelegramException:
+        # Telegram won't let a bot message someone who never opened it.
+        bot.send_message(call.message.chat.id,
+                         "Couldn't send the bake list: the baker needs to open the bot and press Start first.")
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("edit:"))
@@ -194,6 +277,7 @@ def save_edit(message, plan_date: str, item_id: str):
 
 
 def run() -> None:
+    set_all_menus()
     # skip_pending: ignore messages and taps sent while the bot was offline.
     bot.infinity_polling(skip_pending=True)
 
