@@ -17,9 +17,9 @@ A bake planner for small cafés and bakeries in Malaysia that tells the manager 
 
 | Resource | Link |
 |---|---|
-| GitHub Repository | TODO |
-| Replit Project | TODO |
-| Live Demo | TODO |
+| GitHub Repository | https://github.com/derkglova/just-right |
+| Replit Project | https://replit.com/@linegidid/just-right |
+| Live Demo | https://just-right-linegidid.replit.app (dashboard) · Telegram bot: https://t.me/justright_bakery_bot |
 | RunPod Endpoint | Not used (no GPU workload) |
 | Slide Deck | TODO |
 | Demo Video | TODO |
