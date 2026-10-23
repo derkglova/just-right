@@ -8,6 +8,7 @@ channel = "stable-25_05"
 [deployment]
 run = ["python", "src/main.py"]
 deploymentTarget = "gce"
+build = ["uv", "sync", "--frozen"]
 
 [[ports]]
 localPort = 8080
