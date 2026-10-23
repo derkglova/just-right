@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Just Right · Dashboard</title>
+  <!-- TODO (build with Claude Code): style it, add the activity log, waste chart (Chart.js),
+       items table, plan status and a "Send plan to Telegram" button. Label data as sample. -->
+</head>
+<body>
+  <h1>Just Right</h1>
+  <p>Manager dashboard (sample data)</p>
+  <h2>Tomorrow's plan</h2>
+  <table>
+    <tr><th>Item</th><th>Usual</th><th>Bake</th><th>Why</th></tr>
+    {% for r in plan %}
+    <tr><td>{{ r.name }}</td><td>{{ r.usual }}</td><td>{{ r.quantity }}</td><td>{{ r.reason }}</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

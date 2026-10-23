@@ -1,0 +1,5 @@
+[
+  {"id": "croissant", "name": "Croissant", "price": 8.0, "cost": 2.0, "usual_batch": 40, "lead_time": "day before"},
+  {"id": "sourdough", "name": "Sourdough loaf", "price": 18.0, "cost": 6.0, "usual_batch": 15, "lead_time": "day before"},
+  {"id": "muffin", "name": "Banana muffin", "price": 6.0, "cost": 2.0, "usual_batch": 24, "lead_time": "same morning"}
+]
