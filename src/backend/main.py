@@ -7,9 +7,9 @@
 
 API (all JSON, sample data). Shapes match what src/frontend expects:
     GET  /api/plan            tomorrow's plan: status, who approved, each item's numbers and reason
-    POST /api/plan/item       change one item's quantity {"item": "Croissant", "qty": 30}
-    POST /api/approve         approve the plan (also sends the bake list to the baker)
-    POST /api/send-plan       send the plan to the manager on Telegram now
+    GET  /api/plan/today      today's plan (what is being baked today), same shape
+    POST /api/recalculate     work out tomorrow's plan fresh from the latest sales (no Telegram message)
+    POST /api/send-plan       send tomorrow's plan, as it is, to the manager's Telegram (approve/edit there)
     GET  /api/log             activity log, newest first (?limit=30)
     GET  /api/waste           waste and sell-outs this week, last week and earlier weeks
     GET  /api/records         day by day: plan vs closing count, waste RM (?days=30)
@@ -18,7 +18,7 @@ API (all JSON, sample data). Shapes match what src/frontend expects:
     POST /api/items           save edited prices, costs and usual batches
     POST /api/telegram/close  ask staff for the closing count now
     POST /api/telegram/baker  send the approved bake list to the baker now
-    GET  /api/schedule        daily timers: {"close": {"time", "auto", "next_run"}, "baker": {...}, "plan": {...}}
+    GET  /api/schedule        daily timers: {"close": {"time", "auto", "next_run"}, "baker": {...}}
     POST /api/schedule        change timers, e.g. {"close": {"time": "18:30", "auto": true}}
 """
 import csv
@@ -83,6 +83,7 @@ def plan_json(rows: list[dict]) -> dict:
         "status": first["status"],            # 'pending' or 'approved'
         "approved_by": first["decided_by"],
         "approved_at": first["decided_at"],
+        "bake_list_sent": db.get_setting("bake_list_sent_for") == first["plan_date"],
         "items": [
             {
                 "item_id": r["item_id"],
@@ -103,29 +104,21 @@ def api_plan():
     return jsonify(plan_json(current_plan()))
 
 
-@app.post("/api/plan/item")
-def api_edit_item():
-    data = request.get_json(silent=True) or {}
-    plan = current_plan()
-    row = next((p for p in plan if data.get("item") in (p["item_name"], p["item_id"])), None)
-    qty = data.get("qty")
-    if row is None or not isinstance(qty, int) or qty < 0:
-        return jsonify({"error": "Send an item name and a whole number qty"}), 400
-
-    plan_date = row["plan_date"]
-    if plan[0]["status"] == "approved":
-        db.reopen_plan(plan_date)   # changed after approval: needs approving again
-    db.edit_item(plan_date, row["item_id"], qty, "Edited by manager on the dashboard")
-    db.log("Dashboard", "manager", "Plan edited", f"{row['item_name']} {row['final']} -> {qty}")
-    return jsonify(plan_json(db.get_plan(plan_date)))
+@app.get("/api/plan/today")
+def api_plan_today():
+    today = datetime.now(bot.TZ).date().isoformat()
+    plan = db.get_plan(today)
+    if not plan:
+        return jsonify({"date": today, "status": "none", "approved_by": None, "approved_at": None, "items": []})
+    return jsonify(plan_json(plan))
 
 
-@app.post("/api/approve")
-def api_approve():
-    plan = current_plan()
-    if plan[0]["status"] != "approved":
-        bot.approve_plan(plan[0]["plan_date"], "Dashboard")
-    return jsonify(plan_json(db.get_plan(plan[0]["plan_date"])))
+@app.post("/api/recalculate")
+def api_recalculate():
+    items, _ = load_data()
+    db.save_plan(tomorrow(), make_plan(items, db.sales_history()))
+    db.log("Dashboard", "manager", "Plan recalculated", f"New amounts for {tomorrow()} from the latest sales")
+    return jsonify(plan_json(db.get_plan(tomorrow())))
 
 
 @app.post("/api/send-plan")

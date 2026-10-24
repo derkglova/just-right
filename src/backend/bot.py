@@ -120,23 +120,30 @@ def plan_text(plan: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def plan_buttons(plan_date: str) -> InlineKeyboardMarkup:
+def plan_buttons(plan_date: str, approved: bool = False) -> InlineKeyboardMarkup:
     # The plan date is part of each button, so a button always acts on its own plan.
+    # An approved plan only gets [Edit]: changing it sends it back for approval.
     markup = InlineKeyboardMarkup()
-    markup.row(
-        InlineKeyboardButton("Approve", callback_data=f"approve:{plan_date}"),
-        InlineKeyboardButton("Edit", callback_data=f"edit:{plan_date}"),
-    )
+    buttons = [InlineKeyboardButton("Edit", callback_data=f"edit:{plan_date}")]
+    if not approved:
+        buttons.insert(0, InlineKeyboardButton("Approve", callback_data=f"approve:{plan_date}"))
+    markup.row(*buttons)
     return markup
 
 
-def send_plan(chat_id: int = MANAGER_ID, actor_name: str = "Scheduler", role: str = "system") -> None:
-    """Work out tomorrow's plan, save it as pending, and send it with Approve/Edit buttons."""
-    items, _ = load_data()
+def send_plan(chat_id: int = MANAGER_ID, actor_name: str = "Scheduler", role: str = "system",
+              recalculate: bool = False) -> None:
+    """Send tomorrow's plan with Approve/Edit buttons. If there is no plan for tomorrow yet,
+    work it out first. recalculate=True always works it out fresh from the latest sales
+    (dropping earlier edits and approval); otherwise an existing plan is sent as it is."""
     tomorrow = (datetime.now(TZ) + timedelta(days=1)).date().isoformat()
-    db.save_plan(tomorrow, make_plan(items, db.sales_history()))
-    db.log(actor_name, role, "Plan sent", f"Plan for {tomorrow} sent for approval")
-    bot.send_message(chat_id, plan_text(db.get_plan(tomorrow)), reply_markup=plan_buttons(tomorrow))
+    if recalculate or not db.get_plan(tomorrow):
+        items, _ = load_data()
+        db.save_plan(tomorrow, make_plan(items, db.sales_history()))
+    plan = db.get_plan(tomorrow)
+    approved = plan[0]["status"] == "approved"
+    db.log(actor_name, role, "Plan sent", f"Plan for {tomorrow} sent to the manager's Telegram")
+    bot.send_message(chat_id, plan_text(plan), reply_markup=plan_buttons(tomorrow, approved))
 
 
 def check_can_change(call, plan_date: str, action: str):
@@ -150,7 +157,7 @@ def check_can_change(call, plan_date: str, action: str):
     if not plan:
         answer(call, "That plan is gone. Send /plan again.")
         return None
-    if plan[0]["status"] == "approved":
+    if action == "approve" and plan[0]["status"] == "approved":
         answer(call, "This plan is already approved.")
         return None
     return plan
@@ -314,6 +321,8 @@ def finish_count(chat_id: int, user) -> None:
     bot.send_message(chat_id, f"Thanks! Saved the closing count for {state['date']}:\n\n{summary}")
     if chat_id != MANAGER_ID:
         bot.send_message(MANAGER_ID, f"Closing count from {name} ({state['date']}):\n\n{summary}")
+    # Next step of the daily loop: a fresh plan for tomorrow, using the count just saved.
+    send_plan(MANAGER_ID, name, "staff", recalculate=True)
 
 
 @bot.message_handler(commands=["count"])
@@ -332,19 +341,31 @@ def handle_approve(call):
         return
 
     answer(call, "Plan approved.")
-    plan = approve_plan(plan_date, name_of(call.from_user))
-    # Replace the buttons with the final status so nobody taps twice.
-    bot.edit_message_text(plan_text(plan), call.message.chat.id, call.message.message_id)
+    plan, note = approve_plan(plan_date, name_of(call.from_user))
+    # Show the final status; only [Edit] is left, so nobody approves twice.
+    bot.edit_message_text(plan_text(plan), call.message.chat.id, call.message.message_id,
+                          reply_markup=plan_buttons(plan_date, approved=True))
+    bot.send_message(call.message.chat.id, note)
 
 
-def approve_plan(plan_date: str, approver: str) -> list[dict]:
-    """Approve a plan and send the bake list to the baker. Used by Telegram and the dashboard."""
+def bake_list_waits_for_timer() -> bool:
+    """True if the baker's auto-send is on and its time today hasn't passed yet."""
+    now = datetime.now(TZ).strftime("%H:%M")
+    return db.get_setting("baker_auto") == "1" and now < db.get_setting("baker_time")
+
+
+def approve_plan(plan_date: str, approver: str) -> tuple[list[dict], str]:
+    """Approve a plan. The bake list goes to the baker at the auto-send time
+    (set on the dashboard), or right away if auto-send is off or that time has passed.
+    Returns the plan and a short note for the manager."""
     db.approve_plan(plan_date, approver)
     plan = db.get_plan(plan_date)
     db.log(approver, "manager", "Plan approved", f"Plan for {plan_date}: " + ", ".join(
         f"{p['item_name']} {p['final']}" for p in plan))
-    send_bake_list(plan_date)
-    return plan
+    if bake_list_waits_for_timer():
+        return plan, f"The bake list will go to the baker at {db.get_setting('baker_time')}."
+    problem = send_bake_list(plan_date)
+    return plan, problem or "Bake list sent to the baker."
 
 
 def send_bake_list(plan_date: str = None, skip_if_sent: bool = False) -> str:
@@ -406,9 +427,12 @@ def save_edit(message, plan_date: str, item_id: str):
         return
 
     plan = db.get_plan(plan_date)
-    if not plan or plan[0]["status"] == "approved":
-        bot.reply_to(message, "This plan was already approved or replaced, so nothing was changed.")
+    if not plan:
+        bot.reply_to(message, "That plan is gone, so nothing was changed. Send /plan again.")
         return
+    if plan[0]["status"] == "approved":
+        db.reopen_plan(plan_date)   # changed after approval: needs approving again
+        bot.send_message(message.chat.id, "The plan was already approved, so it needs approving again.")
 
     old = next(p for p in plan if p["item_id"] == item_id)
     new_quantity, reason = int(parts[0]), parts[1]

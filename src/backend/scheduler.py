@@ -1,9 +1,9 @@
 """Daily timers the manager can change from the dashboard.
 
-Three jobs run every day:
-- plan:  at plan_time,  send tomorrow's plan to the manager to approve (bot.send_plan)
-- close: at close_time, ask staff for the closing count (bot.start_count)
-- baker: at baker_time, send the approved bake list to the baker (bot.send_bake_list)
+Two jobs run every day:
+- close: at close_time, ask staff for the closing count (bot.start_count).
+         When the count is done, the manager gets tomorrow's plan straight away (bot.finish_count).
+- baker: at baker_time, send the approved bake list to the baker if approving didn't already (backup)
 
 close and baker can be switched off from the dashboard (close_auto, baker_auto).
 Times and switches are saved in the database (db settings), so they survive a restart.
@@ -21,10 +21,6 @@ TIMEZONE = "Asia/Kuala_Lumpur"
 scheduler = BackgroundScheduler(timezone=TIMEZONE)
 
 
-def send_plan_job():
-    bot.send_plan()
-
-
 def close_shop_job():
     bot.start_count()
 
@@ -37,7 +33,6 @@ def baker_job():
 
 # job name -> (function, time setting, on/off setting or None if always on)
 JOBS = {
-    "plan": (send_plan_job, "plan_time", None),
     "close": (close_shop_job, "close_time", "close_auto"),
     "baker": (baker_job, "baker_time", "baker_auto"),
 }

@@ -5,7 +5,7 @@ Tables:
           status, decided_by, decided_at)
     daily_sales(date, item_id, baked, sold, leftover, sold_out_bucket, source)
     activity_log(id, ts, actor_name, role, action, details)
-    settings(key, value)   -- e.g. plan_time, close_time ("HH:MM", set from the dashboard)
+    settings(key, value)   -- e.g. close_time, baker_time ("HH:MM", set from the dashboard)
 
 Each function opens its own connection, so the bot thread and the web server can
 both use the database safely.
@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS settings (
 
 # Used until the manager changes them on the dashboard.
 DEFAULT_SETTINGS = {
-    "plan_time": os.environ.get("PLAN_TIME", "14:00"),    # send tomorrow's plan to the manager
     "close_time": os.environ.get("CLOSE_TIME", "18:00"),  # ask staff for the closing count
     "baker_time": "20:00",                                # send the approved bake list to the baker
     "close_auto": "1",                                    # "1" = timer on, "0" = off
@@ -246,6 +245,7 @@ def save_plan(plan_date: str, recommendations) -> None:
     """Save a new pending plan for plan_date, replacing any earlier one for that day."""
     with connect() as conn:
         conn.execute("DELETE FROM plans WHERE plan_date = ?", (plan_date,))
+        conn.execute("DELETE FROM settings WHERE key = 'bake_list_sent_for' AND value = ?", (plan_date,))
         conn.executemany(
             "INSERT INTO plans (plan_date, item_id, item_name, usual, recommended, final, reason, status)"
             " VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')",
@@ -277,6 +277,7 @@ def edit_item(plan_date: str, item_id: str, final: int, reason: str) -> None:
 def reopen_plan(plan_date: str) -> None:
     """Back to pending, e.g. after an approved plan is edited, so it must be approved again."""
     with connect() as conn:
+        conn.execute("DELETE FROM settings WHERE key = 'bake_list_sent_for' AND value = ?", (plan_date,))
         conn.execute(
             "UPDATE plans SET status = 'pending', decided_by = NULL, decided_at = NULL WHERE plan_date = ?",
             (plan_date,),

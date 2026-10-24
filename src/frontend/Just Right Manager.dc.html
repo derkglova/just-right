@@ -96,18 +96,45 @@
         <div style="font-size:13px;color:#707070">Leftovers × cost</div>
       </div></div>
         </div>
+        <div id="today" style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">Today's plan</div>
+              <div style="font-size:16px;font-weight:600;padding:6px 14px;border-radius:999px;background:#161616;color:#fff;white-space:nowrap">{{ todayDate }}</div>
+            </div>
+            <div style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:{{ todayChipBg }}">{{ todayChip }}</div>
+          </div>
+          <sc-if value="{{ todayHas }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px">
+              <sc-for list="{{ todayTiles }}" as="t" hint-placeholder-count="3">
+                <div style="background:{{ t.bg }};border-radius:22px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center">
+                  <div style="font-size:26px;line-height:1">{{ t.icon }}</div>
+                  <div style="font-size:28px;font-weight:600;letter-spacing:-0.8px;line-height:1.1;font-variant-numeric:tabular-nums">{{ t.qty }}</div>
+                  <div style="font-size:12px;color:#4A4A4A;line-height:1.2">{{ t.name }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:13px;color:#707070">{{ todaySummary }}</div>
+          </sc-if>
+          <sc-if value="{{ todayNone }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:#707070">No plan was saved for today. The baker used the usual batches.</div>
+          </sc-if>
+        </div>
         <div id="plan" style="background:#fff;border-radius:28px;padding:24px 0 12px;display:flex;flex-direction:column;gap:16px">
         <div style="padding:0 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">Tomorrow's plan</div>
-            <div style="font-size:13px;color:#707070">{{ planDateUpper }} · {{ summary }}</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">Tomorrow's plan</div>
+              <div style="font-size:16px;font-weight:600;padding:6px 14px;border-radius:999px;background:#161616;color:#fff;white-space:nowrap">{{ planDateUpper }}</div>
+            </div>
+            <div style="font-size:13px;color:#707070">{{ summary }}</div>
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
           <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-            <button onClick="{{ sendPlan }}" disabled="{{ sending }}" style="appearance:none;cursor:pointer;font-size:14px;font-weight:500;padding:12px 20px;border:0;border-radius:999px;background:#F2F2F2;color:#161616;white-space:nowrap" style-hover="background:#E8E8E8">{{ sendLabel }}</button>
-            <button onClick="{{ approvePlan }}" disabled="{{ approved }}" style="appearance:none;cursor:pointer;font-size:14px;font-weight:500;padding:12px 22px;border:0;border-radius:999px;background:{{ approveBg }};color:#fff;white-space:nowrap" style-hover="opacity:.88">{{ approveLabel }}</button>
+            <button onClick="{{ recalcPlan }}" disabled="{{ recalcing }}" aria-label="Recalculate amounts" title="Recalculate amounts from the latest sales" style="appearance:none;cursor:pointer;width:44px;height:44px;flex:none;font-size:20px;line-height:1;padding:0;border:0;border-radius:50%;background:#F2F2F2;color:#161616;display:flex;align-items:center;justify-content:center" style-hover="background:#E8E8E8">{{ recalcLabel }}</button>
+            <button onClick="{{ sendPlan }}" disabled="{{ sending }}" style="appearance:none;cursor:pointer;font-size:14px;font-weight:500;padding:12px 22px;border:0;border-radius:999px;background:#161616;color:#fff;white-space:nowrap" style-hover="opacity:.88">{{ sendLabel }}</button>
           </div>
-          <div style="font-size:12px;color:#707070;text-align:right;max-width:420px;line-height:1.4">Approve locks tomorrow's numbers for the baker. Resend posts this plan to your Telegram again.</div>
+          <div style="font-size:12px;color:#707070;text-align:right;max-width:340px;line-height:1.4">↻ recalculates from the latest sales. Send it to Telegram to approve.</div>
           </div>
         </div>
         <div style="margin:0 24px;display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:20px;background:{{ statusBg }}">
@@ -127,14 +154,8 @@
                 </div>
                 <div style="text-align:right;font-size:15px;color:#8A8A8A;font-variant-numeric:tabular-nums">{{ r.usual }}</div>
                 <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px;white-space:nowrap">
-                  <sc-if value="{{ r.editing }}" hint-placeholder-val="{{ false }}">
-                    <input value="{{ r.editVal }}" onChange="{{ r.onEditInput }}" onKeyDown="{{ r.onEditKey }}" inputmode="numeric" autofocus="{{ true }}" style="width:56px;box-sizing:border-box;text-align:right;font-family:Lexend,sans-serif;font-size:16px;font-weight:600;padding:7px 10px;border:0;border-radius:999px;background:#F2F2F2;color:#161616;outline:none">
-                    <button onClick="{{ r.saveEdit }}" aria-label="Save" style="appearance:none;cursor:pointer;width:32px;height:32px;flex:none;border:0;border-radius:50%;background:#161616;color:#fff;font-size:14px">✓</button>
-                    <button onClick="{{ r.cancelEdit }}" aria-label="Cancel" style="appearance:none;cursor:pointer;width:32px;height:32px;flex:none;border:0;border-radius:50%;background:#F2F2F2;color:#161616;font-size:14px">×</button>
-                  </sc-if>
                   <sc-if value="{{ r.notEditing }}" hint-placeholder-val="{{ true }}">
                     <div style="font-size:17px;font-weight:600;font-variant-numeric:tabular-nums">{{ r.bake }} <span style="font-size:13px;color:{{ r.deltaColor }}">{{ r.delta }}</span></div>
-                    <button onClick="{{ r.startEdit }}" aria-label="Edit quantity" style="appearance:none;cursor:pointer;width:32px;height:32px;flex:none;border:0;border-radius:50%;background:#F2F2F2;color:#161616;font-size:14px" style-hover="background:#E4E4E4">✎</button>
                   </sc-if>
                 </div>
                 <div style="font-size:14px;line-height:1.4;color:#3A3A3A;text-wrap:pretty">{{ r.reason }}</div>
@@ -476,6 +497,7 @@ const SAMPLE = {
     { name: 'Banana bread', price: 6, cost: 1.8, usual_batch: 12 }
   ]
 };
+const ICONS = { croissant: '🥐', sourdough: '🍞', 'sourdough loaf': '🍞', muffin: '🧁', 'banana muffin': '🧁', 'kaya bun': '🥥', 'cinnamon roll': '🥨', baguette: '🥖', 'banana bread': '🍌' };
 const MIX = ['#161616', '#F4A9C8', '#F2CF6B', '#A9CFC5'];
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const TAG = { count: '#', approval: '✓', edit: '✎', plan: '→' };
@@ -486,7 +508,7 @@ const tClock = d => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-
 const ago = d => { const now = new Date() > NOW && new Date() - NOW > 864e5 * 30 ? NOW : new Date(); const h = Math.round((now - d) / 36e5); if (h < 1) return 'just now'; if (h < 24) return h + 'h ago'; const dd = Math.round(h / 24); return dd + (dd === 1 ? ' day ago' : ' days ago'); };
 
 class Component extends DCLogic {
-  state = { plan: SAMPLE.plan, log: SAMPLE.log, waste: SAMPLE.waste, items: SAMPLE.items, records: [], sending: false, sent: null, toast: null, approvedLocal: null, logType: 'all', active: (() => { try { return (['insights', 'telegram', 'records'].includes(localStorage.getItem('bw-page')) ? localStorage.getItem('bw-page') : 'ops'); } catch (e) { return 'ops'; } })(), vw: window.innerWidth };
+  state = { plan: SAMPLE.plan, log: SAMPLE.log, waste: SAMPLE.waste, items: SAMPLE.items, records: [], todayPlan: null, sending: false, sent: null, toast: null, approvedLocal: null, logType: 'all', active: (() => { try { return (['insights', 'telegram', 'records'].includes(localStorage.getItem('bw-page')) ? localStorage.getItem('bw-page') : 'ops'); } catch (e) { return 'ops'; } })(), vw: window.innerWidth };
   chartRef = React.createRef();
   // Timers run on the server (scheduler.py), so they fire even when this page is closed.
   tg = { close: { time: '18:00', auto: true, last: null }, baker: { time: '20:00', auto: true, last: null } };
@@ -621,8 +643,8 @@ class Component extends DCLogic {
   }
   // Re-read the real state after any action (and every 30 s, to show what the timers or Telegram did).
   async refresh() {
-    const [plan, log, waste, records] = await Promise.all([this.get('/api/plan', null), this.get('/api/log', null), this.get('/api/waste', null), this.get('/api/records', null)]);
-    this.setState(s => ({ plan: plan || s.plan, log: log || s.log, waste: waste || s.waste, records: records || s.records }), () => waste && this.drawChart());
+    const [plan, log, waste, records, todayPlan] = await Promise.all([this.get('/api/plan', null), this.get('/api/log', null), this.get('/api/waste', null), this.get('/api/records', null), this.get('/api/plan/today', null)]);
+    this.setState(s => ({ plan: plan || s.plan, log: log || s.log, waste: waste || s.waste, records: records || s.records, todayPlan: todayPlan || s.todayPlan }), () => waste && this.drawChart());
   }
   async componentDidMount() { this.tgTimer = setInterval(this.tgTick, 30000);
     this.get('/api/schedule', null).then(sch => this.applySchedule(sch));
@@ -633,6 +655,7 @@ class Component extends DCLogic {
     ]);
     this.setState({ plan, log, waste, items }, () => this.drawChart());
     this.get('/api/records', []).then(records => this.setState({ records }));
+    this.get('/api/plan/today', null).then(todayPlan => this.setState({ todayPlan }));
   }
   componentWillUnmount() { clearInterval(this.tgTimer); this.chart && this.chart.destroy(); clearTimeout(this.tt); window.removeEventListener('resize', this.onResize); }
   onResize = () => { const vw = window.innerWidth; if (vw !== this.state.vw) this.setState({ vw }); };
@@ -668,13 +691,20 @@ class Component extends DCLogic {
     this.toast('Plan approved · bake list sent to baker');
     this.refresh();
   };
+  recalcPlan = async () => {
+    this.setState({ recalcing: true });
+    const r = await this.post('/api/recalculate');
+    this.setState({ recalcing: false, ...(r.ok ? { plan: r.data } : {}) });
+    this.toast(r.ok ? 'New amounts worked out · send to Telegram to approve' : 'Could not recalculate');
+    this.refresh();
+  };
   sendPlan = async () => {
     this.setState({ sending: true });
     let ok = true;
     try { const r = await fetch('/api/send-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: this.state.plan.date }) }); if (!r.ok) throw 0; } catch (e) { ok = false; }
     await new Promise(r => setTimeout(r, 600));
     this.setState({ sending: false, sent: ok ? new Date().toISOString() : this.state.sent });
-    this.toast(ok ? 'Plan sent to Telegram' : 'Could not send the plan');
+    this.toast(ok ? 'Plan sent to your Telegram' : 'Could not send the plan');
     this.refresh();
   };
 
@@ -691,6 +721,20 @@ class Component extends DCLogic {
       this.refresh();
     });
   };
+  // Today's plan card: what the baker is working from today.
+  todayVals() {
+    const t = this.state.todayPlan || { status: 'none', items: [] }, items = t.items || [];
+    const dt = new Date((t.date || '') + 'T00:00:00');
+    const approved = t.status === 'approved';
+    return {
+      todayDate: isNaN(dt) ? 'Today' : dt.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }),
+      todayHas: items.length > 0, todayNone: items.length === 0,
+      todayChip: t.status === 'none' ? 'No plan' : approved ? 'Approved by ' + (t.approved_by || 'manager') : 'Was never approved',
+      todayChipBg: approved ? '#DDEFD9' : t.status === 'none' ? '#F2F2F2' : '#FCE1EC',
+      todayTiles: items.map(r => ({ icon: ICONS[String(r.item).toLowerCase()] || '🍞', qty: r.bake, name: r.item, bg: '#F4F4F4' })),
+      todaySummary: `${items.reduce((a, r) => a + (Number(r.bake) || 0), 0)} pieces · ${items.length} items`
+    };
+  }
   // Records page: one card per day (from GET /api/records).
   recordVals() {
     const dash = v => (v === null || v === undefined ? '–' : v);
@@ -724,7 +768,7 @@ class Component extends DCLogic {
       const edited = !!(it.edited ?? it.manager_edited), name = it.item || it.name;
       return { item: name, usual, bake, reason: it.reason || '', slotId: 'item-' + String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         delta: d === 0 ? '' : (d > 0 ? '↑' + d : '↓' + Math.abs(d)), deltaColor: d > 0 ? '#3E9B4F' : '#E8734A',
-        initial: ({ croissant: '🥐', sourdough: '🍞', 'sourdough loaf': '🍞', muffin: '🧁', 'banana muffin': '🧁', 'kaya bun': '🥥', 'cinnamon roll': '🥨', baguette: '🥖', 'banana bread': '🍌' })[String(name).toLowerCase()] || '🍞', dotBg: d > 0 ? '#D5E5E1' : d < 0 ? '#FAD9E6' : '#F2F2F2',
+        initial: ICONS[String(name).toLowerCase()] || '🍞', dotBg: d > 0 ? '#D5E5E1' : d < 0 ? '#FAD9E6' : '#F2F2F2',
         source: edited ? 'You edited' : 'Planner', srcBg: edited ? '#F7D6E4' : '#E4EEEB',
         editing: this.state.editRow === i, notEditing: this.state.editRow !== i, editVal: this.state.editVal ?? '',
         startEdit: () => this.setState({ editRow: i, editVal: String(bake) }),
@@ -760,6 +804,7 @@ class Component extends DCLogic {
       selloutDots: so.map(s => ({ left: Math.max(0, Math.min(100, (s.c.h - 7) / 12 * 100)) })),
       selloutPeak: so.length ? '~' + clock(Math.floor(avgH) + ':' + Math.round((avgH % 1) * 60)).label : '–',
       ...this.recordVals(),
+      ...this.todayVals(),
       logFilters: [['all', 'All'], ['count', 'Counts'], ['approval', 'Approvals'], ['edit', 'Edits']].map(([k, label]) => ({ label, go: () => this.setState({ logType: k }), bg: logType === k ? '#161616' : 'transparent', fg: logType === k ? '#fff' : '#161616' })),
       logRows: logs.filter(l => logType === 'all' || l.type === logType).map(l => ({ ...l, tag: TAG[l.type] || '•', ago: ago(l.at), time: l.at.toLocaleDateString('en-GB', { weekday: 'short' }) + ' ' + tClock(l.at) })),
       wasteTotal: rm(total), wasteLast: rm(lastRm),
@@ -768,10 +813,13 @@ class Component extends DCLogic {
       planDateUpper: dateStr,
       summary: `${rows.reduce((a, r) => a + r.bake, 0)} pieces · ${rows.length} items`,
       statusLabel: approved ? 'Approved' : 'Pending',
-      statusDetail: (approved ? `approved by ${by}, ${at.toLocaleDateString('en-GB', { weekday: 'short' })} ${tClock(at)}` : 'waiting for your approval') + ` · last sent to Telegram ${sent ? tClock(new Date(sent)) : '2:00 PM'}`,
+      statusDetail: approved
+        ? `approved by ${by}, ${at.toLocaleDateString('en-GB', { weekday: 'short' })} ${tClock(at)} · ` + (p.bake_list_sent ? 'bake list sent to the baker' : this.tg.baker.auto ? `bake list goes to the baker at ${clock(this.tg.baker.time).label}` : 'send the bake list from the Telegram page')
+        : 'waiting for you to approve it in Telegram',
       statusBg: approved ? '#DDEFD9' : '#FCE1EC', statusDot: approved ? '#3E9B4F' : '#D9578F',
       approvePlan: this.approvePlan, approved, approveLabel: approved ? `✓ Approved ${tClock(at)}` : 'Approve plan', approveBg: approved ? '#3E9B4F' : '#161616',
-      sendPlan: this.sendPlan, sending, sendLabel: sending ? 'Sending…' : 'Resend to Telegram',
+      sendPlan: this.sendPlan, sending, sendLabel: sending ? 'Sending…' : 'Send to Telegram',
+      recalcPlan: this.recalcPlan, recalcing: !!this.state.recalcing, recalcLabel: this.state.recalcing ? '…' : '↻',
       planRows: rows,
       itemRows: (items || []).map((it, i) => {
         const dr = (this.state.drafts || [])[i] || {};
