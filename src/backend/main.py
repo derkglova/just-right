@@ -65,6 +65,7 @@ def current_plan() -> list[dict]:
 
 def plan_json(rows: list[dict]) -> dict:
     first = rows[0]
+    previous = db.previous_bake(first["plan_date"])
     return {
         "date": first["plan_date"],
         "status": first["status"],
@@ -76,6 +77,7 @@ def plan_json(rows: list[dict]) -> dict:
                 "item_id": r["item_id"],
                 "item": r["item_name"],
                 "usual": r["usual"],
+                "previous": previous.get(r["item_id"]),   # baked the day before
                 "recommended": r["recommended"],
                 "bake": r["final"],
                 "edited": r["final"] != r["recommended"],

@@ -199,7 +199,7 @@ def waste_summary(items: list[dict]) -> dict:
                        "rm": round(sum(r["leftover"] * costs.get(r["item_id"], 0) for r in week), 2)})
 
     return {"this_week": this_week, "sellouts": sellouts,
-            "last_week_sellouts": last_week_sellouts, "weekly": weekly}
+            "last_week_sellouts": last_week_sellouts, "weekly": weekly[-6:]}
 
 
 def daily_records(items: list[dict], days: int = 30) -> list[dict]:
@@ -274,6 +274,17 @@ def latest_plan() -> list[dict]:
     with connect() as conn:
         row = conn.execute("SELECT MAX(plan_date) FROM plans").fetchone()
     return get_plan(row[0]) if row[0] else []
+
+
+def previous_bake(plan_date: str) -> dict:
+    """{item_id: amount} baked the day before plan_date: that day's plan, or its closing count."""
+    day_before = (date.fromisoformat(plan_date) - timedelta(days=1)).isoformat()
+    amounts = {p["item_id"]: p["final"] for p in get_plan(day_before)}
+    if not amounts:
+        with connect() as conn:
+            amounts = {r["item_id"]: r["baked"] for r in conn.execute(
+                "SELECT item_id, baked FROM daily_sales WHERE date = ?", (day_before,))}
+    return amounts
 
 
 def edit_item(plan_date: str, item_id: str, final: int, reason: str) -> None:

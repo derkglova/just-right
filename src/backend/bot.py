@@ -116,9 +116,12 @@ def plan_text(plan: list[dict]) -> str:
     w = weather.load_cache().get(first["plan_date"])
     sky = f"🌧 Forecast: {w['rain']:g} mm rain" if w and w["rain"] >= 1 else "☀️ Forecast: dry"
     lines = [f"📋 Bake plan · {day:%a %d %b}", f"{sky} · {w['temp']:.0f}°C" if w else "", ""]
+    previous = db.previous_bake(first["plan_date"])
     for p in plan:
-        change = p["final"] - p["usual"]
-        arrow = f"↑{change}" if change > 0 else f"↓{-change}" if change < 0 else "="
+        before = previous.get(p["item_id"])
+        change = p["final"] - before if before is not None else 0
+        arrow = f"↑{change}" if change > 0 else f"↓{-change}" if change < 0 else "same"
+        arrow = f"{arrow} vs {'today' if day - timedelta(days=1) == datetime.now(TZ).date() else 'day before'}" if before is not None else "new"
         why = p["reason"].replace("Edited by manager: ", "✎ ")
         lines.append(f"{ICONS.get(p['item_id'], '🍞')} {p['item_name']}: {p['final']} ({arrow})")
         lines.append(f"     {why}")

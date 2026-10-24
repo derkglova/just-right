@@ -9,7 +9,7 @@
 <x-dc>
 <helmet>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="./image-slot.js"></script>
   <style>body{margin:0;background:#D9E3E3;color:#161616;font-family:"Lexend",system-ui,sans-serif}a{color:#161616}a:hover{color:#5E8C80}html{scroll-behavior:smooth}button{font-family:"Lexend",system-ui,sans-serif}</style>
@@ -21,15 +21,11 @@
     <aside style="grid-column:{{ L.asideCol }};grid-row:{{ L.asideRow }};min-width:0;box-sizing:border-box;padding:36px 20px 24px;display:flex;flex-direction:column;gap:32px;background:#fff;position:{{ L.asidePos }};top:0;align-self:start;min-height:{{ L.asideMinH }}">
       <div style="display:flex;flex-direction:column;gap:12px;padding:0 8px">
         <div style="display:flex;align-items:center;gap:10px">
-          <div style="width:40px;height:40px;flex:none;border-radius:14px;background:#161616;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
-            <div style="position:relative;width:24px;height:15px;border-radius:12px 12px 4px 4px;background:#FCE6A4;overflow:hidden">
-              <div style="position:absolute;top:4px;left:5px;width:2px;height:8px;border-radius:2px;background:#161616;transform:rotate(25deg)"></div>
-              <div style="position:absolute;top:3px;left:11px;width:2px;height:9px;border-radius:2px;background:#161616;transform:rotate(25deg)"></div>
-              <div style="position:absolute;top:4px;left:17px;width:2px;height:8px;border-radius:2px;background:#161616;transform:rotate(25deg)"></div>
-            </div>
-            <div style="width:24px;height:3px;border-radius:2px;background:#A9CFC5"></div>
-          </div>
-          <div style="font-weight:600;font-size:24px;letter-spacing:-0.6px">Just Right</div>
+          <div style="font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#707070;line-height:1">Just Right</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-family:Fraunces,Georgia,serif;font-weight:700;font-size:32px;letter-spacing:-0.5px;line-height:1.05">Bakery Fantasy</div>
+          <div style="font-size:13px;color:#707070">Cyberjaya</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <div style="font-size:11px;font-weight:500;letter-spacing:.3px;background:#FCE6A4;color:#161616;padding:5px 10px;border-radius:999px;white-space:nowrap">Sample data</div>
@@ -144,7 +140,7 @@
         <div style="overflow-x:auto">
           <div style="min-width:720px;padding:0 12px">
             <div style="display:grid;grid-template-columns:minmax(150px,1fr) 64px 170px minmax(200px,1.6fr) 110px;gap:14px;padding:8px 12px;font-size:12px;color:#8A8A8A">
-              <div>Item</div><div style="text-align:right">Usual</div><div style="text-align:right">Bake</div><div>Reason</div><div>Source</div>
+              <div>Item</div><div style="text-align:right">{{ prevLabel }}</div><div style="text-align:right">Bake</div><div>Reason</div><div>Source</div>
             </div>
             <sc-for list="{{ planRows }}" as="r" hint-placeholder-count="7">
               <div style="display:grid;grid-template-columns:minmax(150px,1fr) 64px 170px minmax(200px,1.6fr) 110px;gap:14px;padding:10px 12px;border-radius:22px;align-items:center;background:#fff" style-hover="background:#F4F4F4">
@@ -749,16 +745,16 @@ class Component extends DCLogic {
     if (this.chart) this.chart.destroy();
     const W = this.state.waste || {}, tw = W.this_week || [];
     const thisRm = tw.reduce((a, x) => a + (x.leftovers ?? 0) * (x.cost ?? 0), 0), lastRm = W.last_week_rm ?? tw.reduce((a, x) => a + (x.last_week ?? 0) * (x.cost ?? 0), 0);
-    const weeks = [...(W.weekly || []).map(w => ({ label: w.week, v: w.rm })), { label: 'Last week', v: lastRm }, { label: 'This week', v: thisRm }];
+    const weeks = [...(W.weekly || []).slice(-6).map(w => ({ label: w.week, v: w.rm })), { label: 'Last wk', v: lastRm }, { label: 'This wk', v: thisRm }];
     const font = { family: 'Lexend', size: 11 };
     this.chart = new window.Chart(cv, { type: 'bar',
       data: { labels: weeks.map(w => w.label), datasets: [
-        { label: 'Waste', data: weeks.map(w => w.v), backgroundColor: weeks.map((w, i) => i === weeks.length - 1 ? '#161616' : '#F4A9C8'), borderRadius: 10, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.8 }
+        { label: 'Waste', data: weeks.map(w => Math.round(w.v)), backgroundColor: weeks.map((w, i) => i === weeks.length - 1 ? '#161616' : '#F4A9C8'), hoverBackgroundColor: weeks.map((w, i) => i === weeks.length - 1 ? '#161616' : '#E87FAD'), borderRadius: 8, borderSkipped: false, maxBarThickness: 36, barPercentage: 0.75, categoryPercentage: 0.85 }
       ] },
       options: { responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
         plugins: { legend: { display: false }, tooltip: { backgroundColor: '#161616', cornerRadius: 12, padding: 10, titleFont: { family: 'Lexend', weight: '500' }, bodyFont: { family: 'Lexend', size: 12 }, callbacks: { label: c => rm(c.parsed.y) } } },
-        scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: '#161616', font: { family: 'Lexend', size: 11 }, maxRotation: 0, autoSkip: false, callback: function (v) { const l = this.getLabelForValue(v); return l.length > 9 ? l.split(' ') : l; } } },
-          y: { beginAtZero: true, grid: { display: false }, border: { display: false }, ticks: { color: '#6E6A66', font, maxTicksLimit: 5 } } } } });
+        scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: '#161616', font: { family: 'Lexend', size: 11 }, maxRotation: 0, autoSkip: true, autoSkipPadding: 8 } },
+          y: { beginAtZero: true, grid: { color: '#F2F2F2' }, border: { display: false }, ticks: { color: '#6E6A66', font, maxTicksLimit: 4, callback: v => 'RM ' + v } } } } });
   }
 
   toast(msg) { this.setState({ toast: msg }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2600); }
@@ -842,10 +838,11 @@ class Component extends DCLogic {
     const by = approvedLocal ? approvedLocal.by : (p.approved_by || ME);
     const at = new Date(approvedLocal ? approvedLocal.at : (p.approved_at || '2026-10-23T14:20:00'));
     const rows = (p.items || []).map((it, i) => {
-      const usual = it.usual ?? it.usual_batch ?? it.planner_qty ?? 0, bake = it.bake ?? it.final_qty ?? usual, d = bake - usual;
+      // Compared with the day before (what was baked then), not the usual batch.
+      const prev = it.previous ?? null, bake = it.bake ?? it.final_qty ?? 0, d = prev === null ? null : bake - prev, usual = prev === null ? '–' : prev;
       const edited = !!(it.edited ?? it.manager_edited), name = it.item || it.name;
       return { item: name, usual, bake, reason: it.reason || '', slotId: 'item-' + String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-        delta: d === 0 ? '' : (d > 0 ? '↑' + d : '↓' + Math.abs(d)), deltaColor: d > 0 ? '#3E9B4F' : '#E8734A',
+        delta: d === null ? '' : d === 0 ? '=' : (d > 0 ? '↑' + d : '↓' + Math.abs(d)), deltaColor: d > 0 ? '#3E9B4F' : d < 0 ? '#E8734A' : '#8A8A8A',
         initial: ICONS[String(name).toLowerCase()] || '🍞', dotBg: d > 0 ? '#D5E5E1' : d < 0 ? '#FAD9E6' : '#F2F2F2',
         source: edited ? 'You edited' : 'Planner', srcBg: edited ? '#F7D6E4' : '#E4EEEB',
         editing: this.state.editRow === i, notEditing: this.state.editRow !== i, editVal: this.state.editVal ?? '',
@@ -870,6 +867,7 @@ class Component extends DCLogic {
       L: this.layout(this.state.vw),
       p1: active === 'ops' ? 'flex' : 'none', p2: active === 'insights' ? 'flex' : 'none', p3: active === 'telegram' ? 'flex' : 'none', p4: active === 'records' ? 'flex' : 'none',
       tg: this.tgVals(rows, approved),
+      prevLabel: (() => { const d = new Date(p.date + 'T00:00:00'); d.setDate(d.getDate() - 1); return isNaN(d) ? 'Day before' : d.toDateString() === new Date().toDateString() ? 'Today' : d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' }); })(),
       todayLabel: new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }),
       nav: [['ops', 'Daily operations', '▦', '#'], ['insights', 'Insights & setup', '◔', '#'], ['telegram', 'Telegram', '✈', '#'], ['records', 'Records', '☰', '#']]
         .map(([id, label, icon, href]) => ({ label, icon, href, go: go(id), bg: active === id ? '#F4F4F4' : 'transparent', iconBg: active === id ? '#161616' : '#F4F4F4', iconFg: active === id ? '#fff' : '#161616', badge: id === 'ops' && !approved ? '1' : null })),
