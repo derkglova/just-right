@@ -11,7 +11,7 @@ On approve, the bake list goes to the baker. Plans and every action are saved in
 the database (db.py), so they survive a restart and show up in the activity log.
 """
 import os
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import telebot
@@ -20,6 +20,8 @@ from telebot.apihelper import ApiTelegramException
 from telebot.types import BotCommand, BotCommandScopeChat, InlineKeyboardButton, InlineKeyboardMarkup
 
 import db
+import forecast
+import weather
 from planner import load_data, make_plan
 
 load_dotenv()
@@ -31,7 +33,6 @@ STAFF_IDS = {int(x) for x in os.environ.get("STAFF_TELEGRAM_IDS", "").split(",")
 
 bot = telebot.TeleBot(os.environ["TELEGRAM_TOKEN"])
 
-STATUS_LABEL = {"pending": "Pending approval", "approved": "Approved"}
 
 # What each role can do. This drives /start and the "/" command menu.
 ROLE_COMMANDS = {
@@ -104,20 +105,30 @@ def answer(call, text: str = None, alert: bool = False) -> None:
         print(f"Could not answer button tap: {e.description}")
 
 
+ICONS = {"croissant": "🥐", "sourdough": "🍞", "muffin": "🧁"}
+
+
 def plan_text(plan: list[dict]) -> str:
-    """plan is the list of rows from db.get_plan(), one per item."""
+    """Short plan message: date and weather, one line per item (amount, change, why), status.
+    plan is the list of rows from db.get_plan(), one per item."""
     first = plan[0]
-    lines = [f"Bake plan for {first['plan_date']} (sample data, estimated)", ""]
+    day = date.fromisoformat(first["plan_date"])
+    w = weather.load_cache().get(first["plan_date"])
+    sky = f"🌧 Forecast: {w['rain']:g} mm rain" if w and w["rain"] >= 1 else "☀️ Forecast: dry"
+    lines = [f"📋 Bake plan · {day:%a %d %b}", f"{sky} · {w['temp']:.0f}°C" if w else "", ""]
     for p in plan:
         change = p["final"] - p["usual"]
-        sign = f"+{change}" if change > 0 else str(change)
-        lines.append(f"{p['item_name']}: {p['final']} ({sign} vs usual {p['usual']})")
-        lines.append(f"  {p['reason']}")
+        arrow = f"↑{change}" if change > 0 else f"↓{-change}" if change < 0 else "="
+        why = p["reason"].replace("Edited by manager: ", "✎ ")
+        lines.append(f"{ICONS.get(p['item_id'], '🍞')} {p['item_name']}: {p['final']} ({arrow})")
+        lines.append(f"     {why}")
     lines.append("")
-    lines.append(f"Status: {STATUS_LABEL[first['status']]}")
     if first["status"] == "approved":
-        lines.append(f"Approved by {first['decided_by']} at {first['decided_at'][11:16]}")
-    return "\n".join(lines)
+        lines.append(f"✅ Approved by {first['decided_by']} at {first['decided_at'][11:16]}")
+    else:
+        lines.append("⏳ Waiting for your approval")
+    lines.append("(sample data)")
+    return "\n".join(line for i, line in enumerate(lines) if line or i != 1)
 
 
 def plan_buttons(plan_date: str, approved: bool = False) -> InlineKeyboardMarkup:
@@ -131,6 +142,25 @@ def plan_buttons(plan_date: str, approved: bool = False) -> InlineKeyboardMarkup
     return markup
 
 
+def work_out_plan(day: str) -> list:
+    """Tomorrow's recommendations: AI forecast (weekday + weather) through the newsvendor rule.
+    The model retrains on every closing count so far, so it learns each new day straight away.
+    If the forecast fails for any reason, the planner falls back to the 28-day average."""
+    items, _ = load_data()
+    history = db.sales_history()
+    events = db.event_days()
+    try:
+        dates = sorted(r["date"] for r in history)
+        start, end = date.fromisoformat(dates[0]), date.fromisoformat(dates[-1])
+        predictions = forecast.predictions_for(items, history, date.fromisoformat(day),
+                                               weather.history(start, end), weather.for_day(date.fromisoformat(day)),
+                                               events)
+    except Exception as e:   # never block the plan because of the AI or the weather
+        print(f"AI forecast not available ({e}); using the 28-day average.")
+        predictions = {}
+    return make_plan(items, history, predictions, events)
+
+
 def send_plan(chat_id: int = MANAGER_ID, actor_name: str = "Scheduler", role: str = "system",
               recalculate: bool = False) -> None:
     """Send tomorrow's plan with Approve/Edit buttons. If there is no plan for tomorrow yet,
@@ -138,8 +168,7 @@ def send_plan(chat_id: int = MANAGER_ID, actor_name: str = "Scheduler", role: st
     (dropping earlier edits and approval); otherwise an existing plan is sent as it is."""
     tomorrow = (datetime.now(TZ) + timedelta(days=1)).date().isoformat()
     if recalculate or not db.get_plan(tomorrow):
-        items, _ = load_data()
-        db.save_plan(tomorrow, make_plan(items, db.sales_history()))
+        db.save_plan(tomorrow, work_out_plan(tomorrow))
     plan = db.get_plan(tomorrow)
     approved = plan[0]["status"] == "approved"
     db.log(actor_name, role, "Plan sent", f"Plan for {tomorrow} sent to the manager's Telegram")
@@ -321,7 +350,9 @@ def finish_count(chat_id: int, user) -> None:
     bot.send_message(chat_id, f"Thanks! Saved the closing count for {state['date']}:\n\n{summary}")
     if chat_id != MANAGER_ID:
         bot.send_message(MANAGER_ID, f"Closing count from {name} ({state['date']}):\n\n{summary}")
-    # Next step of the daily loop: a fresh plan for tomorrow, using the count just saved.
+    # Next step of the daily loop: the AI learns today's count, then a fresh plan for tomorrow.
+    db.log("Just Right", "system", "AI retrained",
+           f"Forecast updated with {state['date']}: {len({r['date'] for r in db.sales_history()})} days of sales")
     send_plan(MANAGER_ID, name, "staff", recalculate=True)
 
 
@@ -440,7 +471,32 @@ def save_edit(message, plan_date: str, item_id: str):
     db.log(name_of(message.from_user), "manager", "Plan edited",
            f"{old['item_name']} {old['final']} -> {new_quantity}: {reason}")
 
+    # Ask whether this is a one-off, so the AI doesn't learn the unusual sales as normal.
+    markup = InlineKeyboardMarkup()
+    markup.row(InlineKeyboardButton("Yes, one-off event", callback_data=f"event:yes:{plan_date}"),
+               InlineKeyboardButton("No, normal change", callback_data=f"event:no:{plan_date}"))
+    bot.send_message(message.chat.id, f"Is this for a one-off event (e.g. a big order) on {plan_date}?",
+                     reply_markup=markup)
     bot.send_message(message.chat.id, plan_text(db.get_plan(plan_date)), reply_markup=plan_buttons(plan_date))
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith("event:"))
+def handle_event_answer(call):
+    if not is_manager(call.from_user.id):
+        answer(call, "Only the manager can answer this.", alert=True)
+        return
+    _, choice, plan_date = call.data.split(":", 2)
+    if choice == "yes":
+        # The latest edit reason becomes the event note, e.g. "office order of 30".
+        edited = [p for p in db.get_plan(plan_date) if p["final"] != p["recommended"]]
+        note = "; ".join(f"{p['item_name']}: {p['reason'].replace('Edited by manager: ', '')}" for p in edited)
+        db.mark_event(plan_date, note or "One-off event")
+        db.log(name_of(call.from_user), "manager", "Event day", f"{plan_date} marked as a one-off event: {note}")
+        text = f"Got it: {plan_date} is a one-off event. The AI will learn less from that day's sales."
+    else:
+        text = "OK, a normal change."
+    answer(call)
+    bot.edit_message_text(text, call.message.chat.id, call.message.message_id)
 
 
 def run() -> None:

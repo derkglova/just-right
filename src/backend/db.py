@@ -6,6 +6,7 @@ Tables:
     daily_sales(date, item_id, baked, sold, leftover, sold_out_bucket, source)
     activity_log(id, ts, actor_name, role, action, details)
     settings(key, value)   -- e.g. close_time, baker_time ("HH:MM", set from the dashboard)
+    event_days(date, note) -- one-off days (e.g. a big order); the AI forecast learns less from them
 
 Each function opens its own connection, so the bot thread and the web server can
 both use the database safely.
@@ -57,6 +58,10 @@ CREATE TABLE IF NOT EXISTS activity_log (
     action     TEXT NOT NULL,
     details    TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS event_days (
+    date TEXT PRIMARY KEY,
+    note TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS settings (
     key   TEXT PRIMARY KEY,
     value TEXT NOT NULL
@@ -90,7 +95,7 @@ def now() -> str:
 
 
 def init() -> None:
-    """Create the tables, and load the sample sales history the first time."""
+    """Create the tables, and load the sample sales history (again if the sample file changed)."""
     with connect() as conn:
         conn.executescript(SCHEMA)
         # Databases made before the 'source' column existed: add it.
@@ -100,10 +105,13 @@ def init() -> None:
             # Days that aren't in the sample file were counted by staff.
             sample_dates = sorted({r["date"] for r in json.loads(SALES_JSON.read_text())})
             conn.execute("UPDATE daily_sales SET source = 'count' WHERE date > ?", (sample_dates[-1],))
-        if conn.execute("SELECT COUNT(*) FROM daily_sales").fetchone()[0] == 0:
-            rows = json.loads(SALES_JSON.read_text())
+        rows = json.loads(SALES_JSON.read_text())
+        loaded = conn.execute("SELECT COUNT(*) FROM daily_sales WHERE source = 'sample'").fetchone()[0]
+        if loaded != len(rows):
+            # Replace the old sample rows. Days counted by staff are kept (INSERT OR IGNORE).
+            conn.execute("DELETE FROM daily_sales WHERE source = 'sample'")
             conn.executemany(
-                "INSERT INTO daily_sales (date, item_id, baked, sold, leftover, sold_out_bucket, source)"
+                "INSERT OR IGNORE INTO daily_sales (date, item_id, baked, sold, leftover, sold_out_bucket, source)"
                 " VALUES (:date, :item, :baked, :sold, :leftover, :sold_out_bucket, 'sample')",
                 rows,
             )
@@ -205,6 +213,7 @@ def daily_records(items: list[dict], days: int = 30) -> list[dict]:
         sales = [dict(r) for r in conn.execute(
             "SELECT * FROM daily_sales WHERE date >= ?", (dates[-1] if dates else "",))]
 
+    events = event_days()
     records = []
     for day in dates:
         plan = {p["item_id"]: p for p in get_plan(day)}
@@ -227,6 +236,7 @@ def daily_records(items: list[dict], days: int = 30) -> list[dict]:
         first_plan = next(iter(plan.values()), None)
         records.append({
             "date": day,
+            "event": events.get(day),
             "counted": bool(counted),
             "source": "count" if any(c["source"] == "count" for c in counted.values()) else ("sample" if counted else None),
             "plan": {"status": first_plan["status"], "approved_by": first_plan["decided_by"],
@@ -290,6 +300,19 @@ def approve_plan(plan_date: str, decided_by: str) -> None:
             "UPDATE plans SET status = 'approved', decided_by = ?, decided_at = ? WHERE plan_date = ?",
             (decided_by, now(), plan_date),
         )
+
+
+# ---- Event days ----
+
+def mark_event(day: str, note: str) -> None:
+    with connect() as conn:
+        conn.execute("INSERT OR REPLACE INTO event_days VALUES (?, ?)", (day, note))
+
+
+def event_days() -> dict:
+    """{date: note} for every one-off event day."""
+    with connect() as conn:
+        return {r["date"]: r["note"] for r in conn.execute("SELECT * FROM event_days")}
 
 
 # ---- Settings ----

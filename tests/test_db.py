@@ -25,7 +25,7 @@ class TestDb(unittest.TestCase):
 
     def test_init_loads_sample_sales_once(self):
         count = len(db.sales_history())
-        self.assertEqual(count, 84)
+        self.assertEqual(count, 360)   # 120 days x 3 items
         db.init()
         self.assertEqual(len(db.sales_history()), count)
 

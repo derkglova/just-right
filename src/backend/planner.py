@@ -3,19 +3,24 @@
 Idea in one line: running out costs more than a leftover for most bakery items,
 so aim for the *right* amount of waste, not zero (the newsvendor model).
 
-Run `python src/planner.py` to print tomorrow's plan from the sample data.
+Expected demand comes from the AI forecast (forecast.py: weekday + weather), or from the
+28-day average when there isn't enough history. Then: quantity = demand + z x typical miss.
+
+Run `python src/backend/planner.py` to print tomorrow's plan from the sample data.
 """
 from __future__ import annotations
 
 import json
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from statistics import NormalDist, mean, pstdev
+from math import sqrt
+from statistics import NormalDist, mean
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 
 HISTORY_DAYS = 28        # how far back we look
 MAX_CHANGE = 0.15        # never change more than ±15% from the usual batch in one go
+EVENT_WEIGHT = 0.2       # a one-off event day counts as 1/5 of a normal day
 
 # When an item sells out we never see the real demand. Estimate it by how early it ran out.
 SOLD_OUT_UPLIFT = {
@@ -53,7 +58,9 @@ def target_level(price: float, cost: float) -> float:
     return underage / (underage + overage)
 
 
-def plan_item(item: dict, history: list[dict]) -> Recommendation:
+def plan_item(item: dict, history: list[dict], prediction: dict = None, event_dates=()) -> Recommendation:
+    """prediction: the AI forecast for this item (forecast.explain), or None to use the
+    28-day average. event_dates: one-off days that count less in the average."""
     rows = sorted((r for r in history if r["item"] == item["id"]), key=lambda r: r["date"])
     rows = rows[-HISTORY_DAYS:]
     usual = int(item["usual_batch"])
@@ -63,21 +70,39 @@ def plan_item(item: dict, history: list[dict]) -> Recommendation:
         return Recommendation(item["id"], item["name"], usual, usual, 0, round(level, 2), float(usual),
                               "Not enough history yet. Keeping the usual batch.")
 
-    demands = [estimate_demand(r) for r in rows]
-    avg, spread = mean(demands), pstdev(demands)
+    if prediction:
+        # AI forecast: expected demand and its typical miss.
+        avg, spread = prediction["demand"], prediction["error"]
+    else:
+        # Plain average of the last 28 days (event days count 1/5).
+        demands = [estimate_demand(r) for r in rows]
+        weights = [EVENT_WEIGHT if r["date"] in event_dates else 1.0 for r in rows]
+        avg = sum(d * w for d, w in zip(demands, weights)) / sum(weights)
+        spread = sqrt(sum(w * (d - avg) ** 2 for d, w in zip(demands, weights)) / sum(weights))
     z = NormalDist().inv_cdf(level)
     raw = avg + z * spread
 
     low, high = usual * (1 - MAX_CHANGE), usual * (1 + MAX_CHANGE)
     quantity = int(round(min(max(raw, low), high)))
 
-    last_week = rows[-7:]
-    sold_outs = sum(1 for r in last_week if r["leftover"] == 0 and r.get("sold_out_bucket"))
-    avg_left = mean(r["leftover"] for r in last_week)
-    reason = _reason(quantity - usual, sold_outs, avg_left, level)
+    if prediction:
+        reason = _ai_reason(prediction, quantity, raw)
+    else:
+        last_week = rows[-7:]
+        sold_outs = sum(1 for r in last_week if r["leftover"] == 0 and r.get("sold_out_bucket"))
+        avg_left = mean(r["leftover"] for r in last_week)
+        reason = _reason(quantity - usual, sold_outs, avg_left, level)
 
     return Recommendation(item["id"], item["name"], usual, quantity, quantity - usual,
                           round(level, 2), round(avg, 1), reason)
+
+
+def _ai_reason(prediction: dict, quantity: int, raw: float) -> str:
+    """Short why: expected sales, then what pushes it up or down vs a usual day (biggest first).
+    e.g. "~33 sell · rain -7, Sunday +3". A few extra are baked on top (the newsvendor rule)."""
+    parts = sorted(prediction["parts"], key=lambda part: -abs(part[1]))
+    tags = [f"{label} {value:+.0f}" for label, value in parts if abs(value) >= 0.5]
+    return f"~{prediction['demand']:.0f} sell · " + (", ".join(tags) if tags else "normal day")
 
 
 def _reason(change: int, sold_outs: int, avg_left: float, level: float) -> str:
@@ -89,8 +114,11 @@ def _reason(change: int, sold_outs: int, avg_left: float, level: float) -> str:
     return "About right. Keeping the usual batch."
 
 
-def make_plan(items: list[dict], history: list[dict]) -> list[Recommendation]:
-    return [plan_item(item, history) for item in items]
+def make_plan(items: list[dict], history: list[dict], predictions: dict = None,
+              event_dates=()) -> list[Recommendation]:
+    """predictions: {item_id: AI forecast} from forecast.py; items without one use the average."""
+    predictions = predictions or {}
+    return [plan_item(item, history, predictions.get(item["id"]), event_dates) for item in items]
 
 
 def load_data(data_dir: Path = DATA_DIR) -> tuple[list[dict], list[dict]]:
@@ -100,11 +128,19 @@ def load_data(data_dir: Path = DATA_DIR) -> tuple[list[dict], list[dict]]:
 
 
 if __name__ == "__main__":
+    from datetime import date, timedelta
+    import forecast
+    import weather
+
     items, history = load_data()
-    print("Tomorrow's bake plan (sample data)\n")
-    for rec in make_plan(items, history):
+    day = date.fromisoformat(max(r["date"] for r in history)) + timedelta(days=1)
+    day_weather = weather.for_day(day)
+    predictions = forecast.predictions_for(items, history, day, weather.load_cache(), day_weather)
+    plan = make_plan(items, history, predictions)
+    print(f"Bake plan for {day} (sample data) · weather: {day_weather}\n")
+    for rec in plan:
         sign = f"+{rec.change}" if rec.change > 0 else str(rec.change)
         print(f"{rec.name:<16} {rec.quantity:>3}  ({sign:>3} vs usual {rec.usual})  {rec.reason}")
     print("\nDetails:")
-    for rec in make_plan(items, history):
+    for rec in plan:
         print(" ", asdict(rec))

@@ -191,6 +191,42 @@
           <div style="font-weight:500;font-size:40px;letter-spacing:-1.2px;line-height:1.05">Insights &amp; setup</div>
           <div style="font-size:14px;color:#707070">This week</div>
         </div>
+        <div id="forecast" style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">How accurate is the AI forecast</div>
+              <div style="font-size:13px;color:#707070">{{ fcSub }}</div>
+            </div>
+            <div style="font-size:13px;padding:8px 14px;border-radius:999px;background:#F4F4F4;white-space:nowrap">{{ fcTomorrow }}</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px">
+            <div style="flex:1 1 180px;background:#161616;color:#fff;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:13px;color:#BDBDBD">AI misses by</div>
+              <div style="font-size:34px;font-weight:600;letter-spacing:-1px;font-variant-numeric:tabular-nums">{{ fcAi }}</div>
+            </div>
+            <div style="flex:1 1 180px;background:#F4F4F4;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:13px;color:#707070">Old 28-day average missed by</div>
+              <div style="font-size:34px;font-weight:600;letter-spacing:-1px;font-variant-numeric:tabular-nums">{{ fcOld }}</div>
+            </div>
+            <div style="flex:1 1 180px;background:#DDEFD9;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:13px;color:#3A5A3E">Better by</div>
+              <div style="font-size:34px;font-weight:600;letter-spacing:-1px;font-variant-numeric:tabular-nums">{{ fcBetter }}</div>
+            </div>
+          </div>
+          <div style="background:#F9F9F9;border-radius:20px;padding:14px">
+            <div style="position:relative;height:220px"><canvas ref="{{ fcChartRef }}"></canvas></div>
+          </div>
+          <div style="font-size:12px;color:#707070;line-height:1.5">Each day the AI only knew the days before it, then we compared its guess with what really sold (7-day average, pieces per item). Lower is better.</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-weight:500;font-size:16px">What the AI learned</div>
+            <sc-for list="{{ fcEffects }}" as="e" hint-placeholder-count="3">
+              <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 16px;border-radius:999px;background:#F4F4F4;font-size:14px">
+                <div style="font-weight:500">{{ e.item }}</div>
+                <div style="color:#3A3A3A">{{ e.text }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
         <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
           <div style="flex:1 1 100%;min-width:0"><div id="sellouts" style="background:#D5E5E1;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:18px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
@@ -420,6 +456,9 @@
               <div style="display:flex;gap:6px;flex-wrap:wrap">
                 <div style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:{{ d.planBg }}">{{ d.planLabel }}</div>
                 <div style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:{{ d.sourceBg }}">{{ d.sourceLabel }}</div>
+                <sc-if value="{{ d.event }}" hint-placeholder-val="{{ false }}">
+                  <div title="{{ d.event }}" style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:#E4DCF2">One-off event</div>
+                </sc-if>
               </div>
             </div>
             <sc-if value="{{ d.counted }}" hint-placeholder-val="{{ true }}">
@@ -508,8 +547,9 @@ const tClock = d => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-
 const ago = d => { const now = new Date() > NOW && new Date() - NOW > 864e5 * 30 ? NOW : new Date(); const h = Math.round((now - d) / 36e5); if (h < 1) return 'just now'; if (h < 24) return h + 'h ago'; const dd = Math.round(h / 24); return dd + (dd === 1 ? ' day ago' : ' days ago'); };
 
 class Component extends DCLogic {
-  state = { plan: SAMPLE.plan, log: SAMPLE.log, waste: SAMPLE.waste, items: SAMPLE.items, records: [], todayPlan: null, sending: false, sent: null, toast: null, approvedLocal: null, logType: 'all', active: (() => { try { return (['insights', 'telegram', 'records'].includes(localStorage.getItem('bw-page')) ? localStorage.getItem('bw-page') : 'ops'); } catch (e) { return 'ops'; } })(), vw: window.innerWidth };
+  state = { plan: SAMPLE.plan, log: SAMPLE.log, waste: SAMPLE.waste, items: SAMPLE.items, records: [], todayPlan: null, forecast: null, sending: false, sent: null, toast: null, approvedLocal: null, logType: 'all', active: (() => { try { return (['insights', 'telegram', 'records'].includes(localStorage.getItem('bw-page')) ? localStorage.getItem('bw-page') : 'ops'); } catch (e) { return 'ops'; } })(), vw: window.innerWidth };
   chartRef = React.createRef();
+  fcChartRef = React.createRef();
   // Timers run on the server (scheduler.py), so they fire even when this page is closed.
   tg = { close: { time: '18:00', auto: true, last: null }, baker: { time: '20:00', auto: true, last: null } };
   applySchedule(sch) { if (!sch) return; ['close', 'baker'].forEach(k => { if (sch[k]) this.tg[k] = { ...this.tg[k], time: sch[k].time, auto: sch[k].auto }; }); this.forceUpdate(); }
@@ -656,15 +696,53 @@ class Component extends DCLogic {
     this.setState({ plan, log, waste, items }, () => this.drawChart());
     this.get('/api/records', []).then(records => this.setState({ records }));
     this.get('/api/plan/today', null).then(todayPlan => this.setState({ todayPlan }));
+    this.get('/api/forecast', null).then(forecast => this.setState({ forecast }, () => this.drawForecastChart()));
   }
-  componentWillUnmount() { clearInterval(this.tgTimer); this.chart && this.chart.destroy(); clearTimeout(this.tt); window.removeEventListener('resize', this.onResize); }
+  componentWillUnmount() { clearInterval(this.tgTimer); this.chart && this.chart.destroy(); this.fcChart && this.fcChart.destroy(); clearTimeout(this.tt); window.removeEventListener('resize', this.onResize); }
   onResize = () => { const vw = window.innerWidth; if (vw !== this.state.vw) this.setState({ vw }); };
   layout(vw) {
     if (vw >= 900) return { cols: (vw >= 1240 ? '260px' : '240px') + ' minmax(0,1fr)', asideCol: '1', asideRow: '1', mainCol: '2', mainRow: '1', asidePos: 'sticky', asideMinH: 'calc(100vh - 48px)', pad: vw >= 1240 ? '36px 36px' : '32px 28px' };
     return { cols: 'minmax(0,1fr)', asideCol: '1', asideRow: '1', mainCol: '1', mainRow: '2', asidePos: 'static', asideMinH: '0', pad: '28px 20px' };
   }
-  componentDidUpdate(pp, ps) { if (ps.active !== this.state.active) { try { localStorage.setItem('bw-page', this.state.active); } catch (e) {} if (this.state.active === 'ops') setTimeout(() => this.chart && this.chart.resize(), 0); } }
+  componentDidUpdate(pp, ps) { if (ps.active !== this.state.active) { try { localStorage.setItem('bw-page', this.state.active); } catch (e) {} if (this.state.active === 'ops') setTimeout(() => this.chart && this.chart.resize(), 0); if (this.state.active === 'insights') setTimeout(() => this.fcChart && this.fcChart.resize(), 0); } }
 
+  // AI accuracy: 7-day average miss per day, AI vs the old 28-day average (from GET /api/forecast).
+  drawForecastChart(tries = 0) {
+    const cv = this.fcChartRef.current, days = (this.state.forecast || {}).days || [];
+    if (!cv || !window.Chart) { if (tries < 50) setTimeout(() => this.drawForecastChart(tries + 1), 100); return; }
+    if (this.fcChart) this.fcChart.destroy();
+    const roll = key => days.map((d, i) => { const w = days.slice(Math.max(0, i - 6), i + 1); return +(w.reduce((a, x) => a + x[key], 0) / w.length).toFixed(2); });
+    const labels = days.map(d => new Date(d.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }));
+    const font = { family: 'Lexend', size: 11 };
+    this.fcChart = new window.Chart(cv, { type: 'line',
+      data: { labels, datasets: [
+        { label: 'AI forecast', data: roll('ai'), borderColor: '#161616', backgroundColor: '#161616', borderWidth: 3, pointRadius: 0, tension: 0.35 },
+        { label: 'Old average', data: roll('old'), borderColor: '#F4A9C8', backgroundColor: '#F4A9C8', borderWidth: 3, pointRadius: 0, tension: 0.35 }
+      ] },
+      options: { responsive: true, maintainAspectRatio: false, animation: { duration: 400 }, interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'bottom', labels: { font, usePointStyle: true, boxWidth: 8 } },
+          tooltip: { backgroundColor: '#161616', cornerRadius: 12, padding: 10, callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y} pieces off` } } },
+        scales: { x: { grid: { display: false }, border: { display: false }, ticks: { font, maxTicksLimit: 8, maxRotation: 0 } },
+          y: { beginAtZero: true, grid: { color: '#EEE' }, border: { display: false }, ticks: { font, maxTicksLimit: 5 } } } } });
+  }
+  forecastVals() {
+    const f = this.state.forecast;
+    if (!f) return { fcSub: 'Loading…', fcTomorrow: '', fcAi: '–', fcOld: '–', fcBetter: '–', fcEffects: [], fcChartRef: this.fcChartRef };
+    const pct = f.old_miss ? Math.round((1 - f.ai_miss / f.old_miss) * 100) : 0;
+    const t = f.tomorrow || {};
+    const td = new Date((t.date || '') + 'T00:00:00');
+    return {
+      fcSub: `Learns from ${f.trained_days} days of sales, the weekday and the weather. Retrains after every closing count.` + (f.event_days ? ` ${f.event_days} one-off event day(s) count less.` : ''),
+      fcTomorrow: `${isNaN(td) ? 'Tomorrow' : td.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}: ${t.rain >= 1 ? '🌧 ' + t.rain + ' mm rain' : '☀️ dry'} · ${Math.round(t.temp)} °C`,
+      fcAi: `${f.ai_miss} pcs`, fcOld: `${f.old_miss} pcs`, fcBetter: `${pct}%`,
+      fcEffects: (f.effects || []).map(e => {
+        const days = Object.entries(e.weekday).sort((a, b) => b[1] - a[1]);
+        const fmt = v => (v > 0 ? '+' : '') + v;
+        return { item: e.item, text: `${days[0][0]} ${fmt(days[0][1])} · ${days[6][0]} ${fmt(days[6][1])} · 10 mm rain ${fmt(e.rain_10mm)}` };
+      }),
+      fcChartRef: this.fcChartRef
+    };
+  }
   drawChart(tries = 0) {
     const cv = this.chartRef.current;
     if (!cv || !window.Chart) { if (tries < 50) setTimeout(() => this.drawChart(tries + 1), 100); return; }
@@ -747,7 +825,7 @@ class Component extends DCLogic {
         planBg: !plan ? '#F2F2F2' : approved ? '#DDEFD9' : '#FCE1EC',
         sourceLabel: d.source === 'count' ? 'Staff count' : d.source === 'sample' ? 'Sample data' : 'Not counted yet',
         sourceBg: d.source === 'count' ? '#D5E5E1' : d.source === 'sample' ? '#FCE6A4' : '#F2F2F2',
-        counted: d.counted, notCounted: !d.counted,
+        counted: d.counted, notCounted: !d.counted, event: d.event || null,
         waitingNote: 'No closing count yet' + (d.items.length ? ' · planned: ' + d.items.map(r => `${r.item} ${dash(r.planned)}`).join(', ') : ''),
         footer: `${d.leftover} left over · ${rm(d.waste_rm)} waste · ${d.sellouts} sold out`,
         rows: d.items.map(r => ({ item: r.item, planned: dash(r.planned), baked: dash(r.baked), sold: dash(r.sold), left: dash(r.leftover),
@@ -805,6 +883,7 @@ class Component extends DCLogic {
       selloutPeak: so.length ? '~' + clock(Math.floor(avgH) + ':' + Math.round((avgH % 1) * 60)).label : '–',
       ...this.recordVals(),
       ...this.todayVals(),
+      ...this.forecastVals(),
       logFilters: [['all', 'All'], ['count', 'Counts'], ['approval', 'Approvals'], ['edit', 'Edits']].map(([k, label]) => ({ label, go: () => this.setState({ logType: k }), bg: logType === k ? '#161616' : 'transparent', fg: logType === k ? '#fff' : '#161616' })),
       logRows: logs.filter(l => logType === 'all' || l.type === logType).map(l => ({ ...l, tag: TAG[l.type] || '•', ago: ago(l.at), time: l.at.toLocaleDateString('en-GB', { weekday: 'short' }) + ' ' + tClock(l.at) })),
       wasteTotal: rm(total), wasteLast: rm(lastRm),

@@ -5,28 +5,14 @@
 - Starts the Telegram bot polling in a background thread, and the daily timers (scheduler.py).
 - Serves the dashboard (src/frontend) and the API on 0.0.0.0:$PORT (Replit needs this).
 
-API (all JSON, sample data). Shapes match what src/frontend expects:
-    GET  /api/plan            tomorrow's plan: status, who approved, each item's numbers and reason
-    GET  /api/plan/today      today's plan (what is being baked today), same shape
-    POST /api/recalculate     work out tomorrow's plan fresh from the latest sales (no Telegram message)
-    POST /api/send-plan       send tomorrow's plan, as it is, to the manager's Telegram (approve/edit there)
-    GET  /api/log             activity log, newest first (?limit=30)
-    GET  /api/waste           waste and sell-outs this week, last week and earlier weeks
-    GET  /api/records         day by day: plan vs closing count, waste RM (?days=30)
-    GET  /api/records.csv     the same, as a CSV download (one row per day per item)
-    GET  /api/items           items with price, cost and usual batch
-    POST /api/items           save edited prices, costs and usual batches
-    POST /api/telegram/close  ask staff for the closing count now
-    POST /api/telegram/baker  send the approved bake list to the baker now
-    GET  /api/schedule        daily timers: {"close": {"time", "auto", "next_run"}, "baker": {...}}
-    POST /api/schedule        change timers, e.g. {"close": {"time": "18:30", "auto": true}}
+All API endpoints, with examples: docs/documentation.md
 """
 import csv
 import io
 import json
 import os
 import threading
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -36,8 +22,10 @@ load_dotenv()
 
 import bot  # noqa: E402  (needs the env vars above)
 import db  # noqa: E402
+import forecast  # noqa: E402
 import scheduler  # noqa: E402
-from planner import DATA_DIR, load_data, make_plan, target_level  # noqa: E402
+import weather  # noqa: E402
+from planner import DATA_DIR, load_data, target_level  # noqa: E402
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 DASHBOARD_FILE = "Just Right Manager.dc.html"
@@ -70,8 +58,7 @@ def current_plan() -> list[dict]:
     """Tomorrow's plan. If there is none yet, make it (pending, no Telegram message)."""
     plan = db.get_plan(tomorrow())
     if not plan:
-        items, _ = load_data()
-        db.save_plan(tomorrow(), make_plan(items, db.sales_history()))
+        db.save_plan(tomorrow(), bot.work_out_plan(tomorrow()))
         plan = db.get_plan(tomorrow())
     return plan
 
@@ -80,7 +67,7 @@ def plan_json(rows: list[dict]) -> dict:
     first = rows[0]
     return {
         "date": first["plan_date"],
-        "status": first["status"],            # 'pending' or 'approved'
+        "status": first["status"],
         "approved_by": first["decided_by"],
         "approved_at": first["decided_at"],
         "bake_list_sent": db.get_setting("bake_list_sent_for") == first["plan_date"],
@@ -89,8 +76,8 @@ def plan_json(rows: list[dict]) -> dict:
                 "item_id": r["item_id"],
                 "item": r["item_name"],
                 "usual": r["usual"],
-                "recommended": r["recommended"],   # what the planner suggested
-                "bake": r["final"],                # after any manager edit
+                "recommended": r["recommended"],
+                "bake": r["final"],
                 "edited": r["final"] != r["recommended"],
                 "reason": r["reason"],
             }
@@ -115,8 +102,7 @@ def api_plan_today():
 
 @app.post("/api/recalculate")
 def api_recalculate():
-    items, _ = load_data()
-    db.save_plan(tomorrow(), make_plan(items, db.sales_history()))
+    db.save_plan(tomorrow(), bot.work_out_plan(tomorrow()))
     db.log("Dashboard", "manager", "Plan recalculated", f"New amounts for {tomorrow()} from the latest sales")
     return jsonify(plan_json(db.get_plan(tomorrow())))
 
@@ -129,7 +115,7 @@ def api_send_plan():
 
 # ---- Activity log ----
 
-LOG_TYPES = {"Plan approved": "approval", "Plan edited": "edit",
+LOG_TYPES = {"Plan approved": "approval", "Plan edited": "edit", "Event day": "edit",
              "Closing count": "count", "Count requested": "count"}
 
 
@@ -140,7 +126,7 @@ def api_log():
         {
             "who": e["actor_name"],
             "role": e["role"],
-            "type": LOG_TYPES.get(e["action"], "plan"),   # the design's filters: count / approval / edit
+            "type": LOG_TYPES.get(e["action"], "plan"),
             "action": f"{e['action']}: {e['details']}",
             "at": e["ts"],
         }
@@ -154,6 +140,26 @@ def api_log():
 def api_waste():
     items, _ = load_data()
     return jsonify(db.waste_summary(items))
+
+
+@app.get("/api/forecast")
+def api_forecast():
+    items, _ = load_data()
+    history = db.sales_history()
+    events = db.event_days()
+    dates = sorted(r["date"] for r in history)
+    weather_by_date = weather.history(date.fromisoformat(dates[0]), date.fromisoformat(dates[-1]))
+    days = forecast.backtest(items, history, weather_by_date, events)
+    recent = days[-30:]
+    return jsonify({
+        "days": days[-60:],
+        "ai_miss": round(sum(d["ai"] for d in recent) / len(recent), 1) if recent else None,
+        "old_miss": round(sum(d["old"] for d in recent) / len(recent), 1) if recent else None,
+        "trained_days": len(set(dates)),
+        "event_days": len(events),
+        "effects": forecast.learned_effects(items, history, weather_by_date, events),
+        "tomorrow": {"date": tomorrow(), **weather.for_day(date.fromisoformat(tomorrow()))},
+    })
 
 
 @app.get("/api/records")
@@ -187,7 +193,6 @@ def api_items():
 
 @app.post("/api/items")
 def api_save_items():
-    """Save edited prices, costs and usual batches. Matched by id or name; other fields are kept."""
     edits = request.get_json(silent=True) or []
     items, _ = load_data()
     for item in items:
