@@ -1,8 +1,7 @@
 {
-  "name": "Just Right Bakery (sample)",
+  "name": "Bakery Fantasy",
   "location": "Cyberjaya",
   "open_hour": 8,
   "close_hour": 18,
-  "plan_time": "14:00",
   "note": "Simulated Orbyte shop profile. Staff Telegram IDs come from environment variables, not this file."
 }

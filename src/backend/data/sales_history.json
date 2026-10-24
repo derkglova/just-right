@@ -1,0 +1,2882 @@
+[
+  {
+    "date": "2026-06-25",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 35,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-25",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-25",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 17,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-26",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-06-26",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-26",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-27",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "2_4"
+  },
+  {
+    "date": "2026-06-27",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-27",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-06-28",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-06-28",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-28",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-06-29",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 30,
+    "leftover": 10,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-29",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 7,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-29",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 11,
+    "leftover": 13,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-30",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 30,
+    "leftover": 10,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-30",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-06-30",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-01",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 34,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-01",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-01",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 18,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-02",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 36,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-02",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-02",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-03",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-03",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-03",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-04",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "2_4"
+  },
+  {
+    "date": "2026-07-04",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 15,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-04",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-05",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 36,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-05",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 6,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-05",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 9,
+    "leftover": 15,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-06",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 33,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-06",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-06",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 20,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-07",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-07",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 7,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-07",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 20,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-08",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 37,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-08",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-08",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-09",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-09",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-09",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 23,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-10",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-10",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-10",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-11",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-11",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-11",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-12",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-12",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-12",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-13",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 35,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-13",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-13",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-14",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-14",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-14",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-15",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-15",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-15",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-16",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 39,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-16",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-16",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-17",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 37,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-17",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-17",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 17,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-18",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-18",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-18",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-19",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-19",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-19",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-20",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 26,
+    "leftover": 14,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-20",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-20",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 13,
+    "leftover": 11,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-21",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 33,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-21",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-21",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 15,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-22",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 34,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-22",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 6,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-22",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 14,
+    "leftover": 10,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-23",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 39,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-23",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-23",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-24",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-24",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-24",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-25",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-25",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-25",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-26",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 36,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-26",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-26",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-27",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-27",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-27",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-28",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 35,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-28",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-28",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-29",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 37,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-29",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-29",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-30",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-07-30",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-30",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-31",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 29,
+    "leftover": 11,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-31",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-07-31",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-01",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-01",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-01",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-02",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "2_4"
+  },
+  {
+    "date": "2026-08-02",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-02",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-03",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-03",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-03",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 18,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-04",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-04",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 7,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-04",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-05",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 36,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-05",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-05",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 20,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-06",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "2_4"
+  },
+  {
+    "date": "2026-08-06",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-06",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-07",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-07",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-07",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 23,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-08",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "2_4"
+  },
+  {
+    "date": "2026-08-08",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-08",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-09",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-09",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 15,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-09",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-10",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 37,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-10",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-10",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 14,
+    "leftover": 10,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-11",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 33,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-11",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-11",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-12",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-12",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-12",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 15,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-13",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-13",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-13",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-14",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-14",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-14",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 17,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-15",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-15",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-15",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 23,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-16",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-16",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 14,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-16",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 23,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-17",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-17",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-17",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-18",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 36,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-18",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 14,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-18",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 18,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-19",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 27,
+    "leftover": 13,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-19",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-19",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-20",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-20",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-20",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-21",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-21",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-21",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 23,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-22",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "2_4"
+  },
+  {
+    "date": "2026-08-22",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-22",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-23",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-23",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-23",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-24",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 37,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-24",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 7,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-24",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 20,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-25",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-25",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-25",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-26",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-26",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-26",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 20,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-27",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-27",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-27",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-28",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-28",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 15,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-28",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-29",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "2_4"
+  },
+  {
+    "date": "2026-08-29",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-29",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-30",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "2_4"
+  },
+  {
+    "date": "2026-08-30",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-30",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-08-31",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 33,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-31",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-08-31",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-01",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 32,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-01",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-01",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 17,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-02",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 34,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-02",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 5,
+    "leftover": 10,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-02",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 23,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-03",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 36,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-03",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-03",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 15,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-04",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-04",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 15,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-04",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 18,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-05",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-05",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-05",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-06",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-06",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 15,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-06",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-07",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 31,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-07",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-07",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-08",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-08",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 6,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-08",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-09",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-09",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 14,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-09",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 20,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-10",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-10",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-10",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 17,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-11",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 39,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-11",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-11",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-12",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-12",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-12",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 18,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-13",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-13",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 14,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-13",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 17,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-14",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 37,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-14",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-14",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 23,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-15",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 39,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-15",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-15",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 18,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-16",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 37,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-16",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-16",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-17",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-17",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-17",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-18",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 34,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-18",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-18",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 18,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-19",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 35,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-19",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 14,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-19",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-20",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 28,
+    "leftover": 12,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-20",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-20",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 18,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-21",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 30,
+    "leftover": 10,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-21",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 4,
+    "leftover": 11,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-21",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 7,
+    "leftover": 17,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-22",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 20,
+    "leftover": 20,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-22",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 7,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-22",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 14,
+    "leftover": 10,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-23",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 39,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-23",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-23",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 15,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-24",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 21,
+    "leftover": 19,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-24",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-24",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-25",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-25",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-25",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 20,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-26",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-09-26",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-26",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-27",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 31,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-27",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-27",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 10,
+    "leftover": 14,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-28",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-28",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-28",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 18,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-29",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 35,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-29",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-29",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-30",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 29,
+    "leftover": 11,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-30",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 6,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-09-30",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 12,
+    "leftover": 12,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-01",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-01",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 7,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-01",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-02",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 36,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-02",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-02",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-03",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "2_4"
+  },
+  {
+    "date": "2026-10-03",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-03",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 24,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-10-04",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 34,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-04",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-04",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 20,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-05",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 32,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-05",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-05",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-06",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 23,
+    "leftover": 17,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-06",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-06",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 14,
+    "leftover": 10,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-07",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-07",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-07",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-08",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 32,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-08",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-08",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-09",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 39,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-09",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-09",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 22,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-10",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 28,
+    "leftover": 12,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-10",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-10",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 12,
+    "leftover": 12,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-11",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-10-11",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-11",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-12",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 35,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-12",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 8,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-12",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 8,
+    "leftover": 16,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-13",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 39,
+    "leftover": 1,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-13",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-13",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-14",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 35,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-14",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-14",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 14,
+    "leftover": 10,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-15",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-15",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 13,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-15",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-16",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-10-16",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 11,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-16",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-17",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-17",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-17",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 15,
+    "leftover": 9,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-18",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 40,
+    "leftover": 0,
+    "sold_out_bucket": "after_4"
+  },
+  {
+    "date": "2026-10-18",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-18",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 16,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-19",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 29,
+    "leftover": 11,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-19",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 7,
+    "leftover": 8,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-19",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 19,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-20",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 34,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-20",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 10,
+    "leftover": 5,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-20",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 17,
+    "leftover": 7,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-21",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 37,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-21",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 9,
+    "leftover": 6,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-21",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 20,
+    "leftover": 4,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-22",
+    "item": "croissant",
+    "baked": 40,
+    "sold": 38,
+    "leftover": 2,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-22",
+    "item": "sourdough",
+    "baked": 15,
+    "sold": 12,
+    "leftover": 3,
+    "sold_out_bucket": null
+  },
+  {
+    "date": "2026-10-22",
+    "item": "muffin",
+    "baked": 24,
+    "sold": 21,
+    "leftover": 3,
+    "sold_out_bucket": null
+  }
+]

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>body{margin:0;background:#E8E8ED;color:#1D1D1F;font-family:"Lexend",system-ui,sans-serif}a{color:#1D1D1F}a:hover{color:#0071E3}html{scroll-behavior:smooth}button{font-family:"Lexend",system-ui,sans-serif}</style>
+</helmet>
+
+<div style="min-height:100vh;padding:24px;box-sizing:border-box;background:#E8E8ED">
+  <div style="max-width:1560px;margin:0 auto;background:#fff;border-radius:40px;overflow:clip;display:grid;grid-template-columns:{{ L.cols }};align-items:stretch;min-height:calc(100vh - 48px)">
+
+    <aside style="grid-column:{{ L.asideCol }};grid-row:{{ L.asideRow }};min-width:0;box-sizing:border-box;padding:36px 20px 24px;display:flex;flex-direction:column;gap:32px;background:#fff;position:{{ L.asidePos }};top:0;align-self:start;min-height:{{ L.asideMinH }}">
+      <div style="display:flex;flex-direction:column;gap:12px;padding:0 8px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#6E6E73;line-height:1">Just Right</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-family:Fraunces,Georgia,serif;font-weight:700;font-size:32px;letter-spacing:-0.5px;line-height:1.05">Bakery Fantasy</div>
+          <div style="font-size:13px;color:#6E6E73">Cyberjaya</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <div style="font-size:11px;font-weight:500;letter-spacing:.3px;background:#FFF6E0;color:#8A5A00;padding:5px 10px;border-radius:999px;white-space:nowrap">Sample data</div>
+        </div>
+      </div>
+      <nav style="display:flex;flex-direction:column;gap:4px">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="6">
+          <a href="{{ n.href }}" onClick="{{ n.go }}" style="display:flex;align-items:center;gap:12px;padding:6px 12px 6px 6px;border-radius:999px;text-decoration:none;color:#1D1D1F;font-size:16px;background:{{ n.bg }}" style-hover="background:#F5F5F7">
+            <div style="width:40px;height:40px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;background:{{ n.iconBg }};color:{{ n.iconFg }}">{{ n.icon }}</div>
+            <div style="flex:1;min-width:0;line-height:1.25">{{ n.label }}</div>
+            <sc-if value="{{ n.badge }}" hint-placeholder-val="{{ false }}">
+              <div style="width:24px;height:24px;flex:none;border-radius:50%;background:#FF3B30;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ n.badge }}</div>
+            </sc-if>
+          </a>
+        </sc-for>
+      </nav>
+      <div style="margin-top:auto;background:#F5F5F7;border-radius:28px;padding:22px 18px 18px;display:flex;flex-direction:column;align-items:center;gap:12px">
+        <div style="width:76px;height:76px;border-radius:50%;background:#fff;padding:3px;box-sizing:border-box">
+          <div role="img" aria-label="Store manager" style="width:70px;height:70px;border-radius:50%;background:#1D1D1F url(./manager.png) no-repeat;background-size:150% auto;background-position:8% 52%"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+          <div style="font-size:16px;font-weight:500">{{ managerName }}</div>
+          <div style="font-size:13px;color:#6E6E73">Store manager</div>
+        </div>
+      </div>
+    </aside>
+
+    <section style="grid-column:{{ L.mainCol }};grid-row:{{ L.mainRow }};min-width:0;background:#F5F5F7;padding:{{ L.pad }};box-sizing:border-box">
+      <div data-screen-label="01 Daily operations" style="display:{{ p1 }};flex-direction:column;gap:24px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+          <div style="font-weight:500;font-size:40px;letter-spacing:-1.2px;line-height:1.05">Daily operations</div>
+          <div style="font-size:14px;color:#6E6E73">{{ todayLabel }}</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:stretch">
+          <div style="flex:1.7 1 520px;min-width:0;display:flex;flex-direction:column"><div id="waste" style="flex:1;background:#FFF6E0;border-radius:28px;padding:24px;display:flex;flex-wrap:wrap;gap:24px">
+        <div style="flex:1 1 200px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-weight:500;font-size:20px">Waste this week</div>
+          <div style="font-weight:500;font-size:52px;letter-spacing:-1.6px;line-height:1;font-variant-numeric:tabular-nums">{{ wasteTotal }}</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;flex-wrap:wrap">
+            <div style="font-weight:600;padding:4px 10px;border-radius:999px;background:{{ wasteChipBg }};color:#fff;font-variant-numeric:tabular-nums">{{ wasteChip }}</div>
+            <div>vs {{ wasteLast }} last week</div>
+          </div>
+          <div style="font-size:13px;color:#6E6E73;line-height:1.45;margin-top:auto">Leftovers × rough cost, per week. Blue is this week.</div>
+        </div>
+        <div style="flex:2 1 320px;background:#fff;border-radius:22px;padding:16px;min-width:0">
+          <div style="position:relative;height:230px"><canvas ref="{{ chartRef }}"></canvas></div>
+        </div>
+      </div></div>
+          <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column"><div id="waste-mix" style="flex:1;background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div style="font-weight:500;font-size:20px">Where this week's waste went</div>
+        <div style="display:flex;gap:6px;height:40px">
+          <sc-for list="{{ mix }}" as="m" hint-placeholder-count="4">
+            <div style="height:100%;border-radius:14px;background:{{ m.color }};flex:{{ m.flex }}"></div>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px">
+          <sc-for list="{{ mix }}" as="m" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:10px;font-size:15px;min-width:0">
+              <div style="width:12px;height:12px;flex:none;border-radius:50%;background:{{ m.color }}"></div>
+              <div style="min-width:0"><span style="font-weight:600;font-variant-numeric:tabular-nums">{{ m.rm }}</span> {{ m.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:13px;color:#6E6E73">Leftovers × cost</div>
+      </div></div>
+        </div>
+        <div id="today" style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">Today's plan</div>
+              <div style="font-size:16px;font-weight:600;padding:6px 14px;border-radius:999px;background:#E8F1FC;color:#0071E3;white-space:nowrap">{{ todayDate }}</div>
+            </div>
+            <div style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:{{ todayChipBg }}">{{ todayChip }}</div>
+          </div>
+          <sc-if value="{{ todayHas }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px">
+              <sc-for list="{{ todayTiles }}" as="t" hint-placeholder-count="3">
+                <div style="background:{{ t.bg }};border-radius:22px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center">
+                  <div style="font-size:26px;line-height:1">{{ t.icon }}</div>
+                  <div style="font-size:28px;font-weight:600;letter-spacing:-0.8px;line-height:1.1;font-variant-numeric:tabular-nums">{{ t.qty }}</div>
+                  <div style="font-size:12px;color:#424245;line-height:1.2">{{ t.name }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:13px;color:#6E6E73">{{ todaySummary }}</div>
+          </sc-if>
+          <sc-if value="{{ todayNone }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:14px;color:#6E6E73">No plan was saved for today. The baker used the usual batches.</div>
+          </sc-if>
+        </div>
+        <div id="plan" style="background:#fff;border-radius:28px;padding:24px 0 12px;display:flex;flex-direction:column;gap:16px">
+        <div style="padding:0 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">Tomorrow's plan</div>
+              <div style="font-size:16px;font-weight:600;padding:6px 14px;border-radius:999px;background:#E8F1FC;color:#0071E3;white-space:nowrap">{{ planDateUpper }}</div>
+            </div>
+            <div style="font-size:13px;color:#6E6E73">{{ summary }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+            <button onClick="{{ recalcPlan }}" disabled="{{ recalcing }}" aria-label="Recalculate amounts" title="Recalculate amounts from the latest sales" style="appearance:none;cursor:pointer;width:44px;height:44px;flex:none;font-size:20px;line-height:1;padding:0;border:0;border-radius:50%;background:#F0F0F3;color:#1D1D1F;display:flex;align-items:center;justify-content:center" style-hover="background:#E8E8ED">{{ recalcLabel }}</button>
+            <button onClick="{{ sendPlan }}" disabled="{{ sending }}" style="appearance:none;cursor:pointer;font-size:14px;font-weight:500;padding:12px 22px;border:0;border-radius:999px;background:#0071E3;color:#fff;white-space:nowrap" style-hover="opacity:.88">{{ sendLabel }}</button>
+          </div>
+          <div style="font-size:12px;color:#6E6E73;text-align:right;max-width:340px;line-height:1.4">↻ recalculates from the latest sales. Send it to Telegram to approve.</div>
+          </div>
+        </div>
+        <div style="margin:0 24px;display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:20px;background:{{ statusBg }}">
+          <div style="width:10px;height:10px;flex:none;border-radius:50%;background:{{ statusDot }}"></div>
+          <div style="font-size:14px"><span style="font-weight:600">{{ statusLabel }}</span> · {{ statusDetail }}</div>
+        </div>
+        <div style="overflow-x:auto">
+          <div style="min-width:720px;padding:0 12px">
+            <div style="display:grid;grid-template-columns:minmax(150px,1fr) 64px 170px minmax(200px,1.6fr) 110px;gap:14px;padding:8px 12px;font-size:12px;color:#86868B">
+              <div>Item</div><div style="text-align:right">{{ prevLabel }}</div><div style="text-align:right">Bake</div><div>Reason</div><div>Source</div>
+            </div>
+            <sc-for list="{{ planRows }}" as="r" hint-placeholder-count="7">
+              <div style="display:grid;grid-template-columns:minmax(150px,1fr) 64px 170px minmax(200px,1.6fr) 110px;gap:14px;padding:10px 12px;border-radius:22px;align-items:center;background:#fff" style-hover="background:#F5F5F7">
+                <div style="display:flex;align-items:center;gap:12px;min-width:0">
+                  <div style="width:40px;height:40px;flex:none;border-radius:50%;background:{{ r.dotBg }};display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1">{{ r.initial }}</div>
+                  <div style="font-size:16px;font-weight:500">{{ r.item }}</div>
+                </div>
+                <div style="text-align:right;font-size:15px;color:#86868B;font-variant-numeric:tabular-nums">{{ r.usual }}</div>
+                <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px;white-space:nowrap">
+                  <sc-if value="{{ r.notEditing }}" hint-placeholder-val="{{ true }}">
+                    <div style="font-size:17px;font-weight:600;font-variant-numeric:tabular-nums">{{ r.bake }} <span style="font-size:13px;color:{{ r.deltaColor }}">{{ r.delta }}</span></div>
+                  </sc-if>
+                </div>
+                <div style="font-size:14px;line-height:1.4;color:#3A3A3C;text-wrap:pretty">{{ r.reason }}</div>
+                <div style="display:flex;align-items:center;gap:6px;background:{{ r.srcBg }};padding:6px 12px;border-radius:999px;font-size:12px;width:fit-content;white-space:nowrap">{{ r.source }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+        <div id="activity" style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">Activity log</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;background:#fff;border-radius:999px;padding:4px">
+            <sc-for list="{{ logFilters }}" as="f" hint-placeholder-count="4">
+              <button onClick="{{ f.go }}" style="appearance:none;cursor:pointer;font-size:13px;font-weight:500;padding:7px 12px;border:0;border-radius:999px;background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <sc-for list="{{ logRows }}" as="l" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 18px 10px 10px;border-radius:26px;background:#fff">
+            <div style="width:44px;height:44px;border-radius:50%;background:{{ l.tagBg }};color:{{ l.tagFg }};display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px">{{ l.tag }}</div>
+            <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+              <div style="font-size:15px;font-weight:500;line-height:1.3">{{ l.action }}</div>
+              <div style="font-size:13px;color:#6E6E73">{{ l.who }} · {{ l.ago }}</div>
+            </div>
+            <div style="font-size:13px;white-space:nowrap;color:#424245;font-variant-numeric:tabular-nums">{{ l.time }}</div>
+          </div>
+        </sc-for>
+      </div>
+      </div>
+      <div data-screen-label="02 Insights and setup" style="display:{{ p2 }};flex-direction:column;gap:24px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+          <div style="font-weight:500;font-size:40px;letter-spacing:-1.2px;line-height:1.05">Insights &amp; setup</div>
+          <div style="font-size:14px;color:#6E6E73">This week</div>
+        </div>
+        <div id="forecast" style="background:#fff;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">How accurate is the AI forecast</div>
+              <div style="font-size:13px;color:#6E6E73">{{ fcSub }}</div>
+            </div>
+            <div style="font-size:13px;padding:8px 14px;border-radius:999px;background:#F5F5F7;white-space:nowrap">{{ fcTomorrow }}</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px">
+            <div style="flex:1 1 180px;background:#1D1D1F;color:#fff;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:13px;color:#AEAEB2">AI misses by</div>
+              <div style="font-size:34px;font-weight:600;letter-spacing:-1px;font-variant-numeric:tabular-nums">{{ fcAi }}</div>
+            </div>
+            <div style="flex:1 1 180px;background:#F5F5F7;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:13px;color:#6E6E73">Old 28-day average missed by</div>
+              <div style="font-size:34px;font-weight:600;letter-spacing:-1px;font-variant-numeric:tabular-nums">{{ fcOld }}</div>
+            </div>
+            <div style="flex:1 1 180px;background:#E8F3EA;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:13px;color:#248A3D">Better by</div>
+              <div style="font-size:34px;font-weight:600;letter-spacing:-1px;font-variant-numeric:tabular-nums">{{ fcBetter }}</div>
+            </div>
+          </div>
+          <div style="background:#FAFAFC;border-radius:20px;padding:14px">
+            <div style="position:relative;height:220px"><canvas ref="{{ fcChartRef }}"></canvas></div>
+          </div>
+          <div style="font-size:12px;color:#6E6E73;line-height:1.5">Each day the AI only knew the days before it, then we compared its guess with what really sold (7-day average, pieces per item). Lower is better.</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-weight:500;font-size:16px">What the AI learned</div>
+            <sc-for list="{{ fcEffects }}" as="e" hint-placeholder-count="3">
+              <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 16px;border-radius:999px;background:#F5F5F7;font-size:14px">
+                <div style="font-weight:500">{{ e.item }}</div>
+                <div style="color:#3A3A3C">{{ e.text }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+          <div style="flex:1 1 100%;min-width:0"><div id="sellouts" style="background:#EDEDF0;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-weight:500;font-size:20px">Sell-outs this week</div>
+            <div style="font-size:13px;color:#6E6E73">{{ selloutSub }}</div>
+          </div>
+          <div style="font-weight:500;font-size:44px;letter-spacing:-1.4px;line-height:1;font-variant-numeric:tabular-nums">{{ selloutCount }}</div>
+        </div>
+        <div style="background:#fff;border-radius:20px;padding:16px 16px 10px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:end;height:110px">
+            <sc-for list="{{ selloutDays }}" as="d" hint-placeholder-count="7">
+              <div style="display:flex;flex-direction:column;justify-content:flex-end;height:100%;gap:3px">
+                <div style="height:{{ d.restH }}%;border-radius:999px;background:#F0F0F3"></div>
+                <div style="height:{{ d.h }}%;border-radius:10px;background:#FF9F0A"></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;font-size:12px;color:#6E6E73;text-align:center">
+            <sc-for list="{{ selloutDays }}" as="d" hint-placeholder-count="7"><div>{{ d.day }}</div></sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ selloutRows }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.55);font-size:15px">
+              <div style="font-weight:500">{{ s.item }}</div>
+              <div style="font-size:14px;white-space:nowrap;font-variant-numeric:tabular-nums">{{ s.when }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#fff;border-radius:20px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;gap:12px;font-size:15px">
+            <div>Usually runs out around</div>
+            <div style="font-weight:600;font-variant-numeric:tabular-nums">{{ selloutPeak }}</div>
+          </div>
+          <div style="position:relative;height:8px;border-radius:999px;background:#F0F0F3">
+            <sc-for list="{{ selloutDots }}" as="d" hint-placeholder-count="4">
+              <div style="position:absolute;top:50%;left:{{ d.left }}%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#FF9F0A;border:2px solid #fff;box-sizing:border-box"></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#6E6E73"><div>7 AM</div><div>1 PM</div><div>7 PM</div></div>
+        </div>
+      </div></div>
+          
+        </div>
+        <div id="items" style="background:#EDEDF0;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+          <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">Items and costs</div>
+          <div style="display:flex;gap:8px">
+            <sc-if value="{{ editingItems }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ cancelItems }}" style="appearance:none;cursor:pointer;font-size:14px;font-weight:500;padding:10px 18px;border:0;border-radius:999px;background:#fff;color:#1D1D1F" style-hover="background:#F5F5F7">Cancel</button>
+            </sc-if>
+            <button onClick="{{ toggleItems }}" style="appearance:none;cursor:pointer;font-size:14px;font-weight:500;padding:10px 20px;border:0;border-radius:999px;background:#0071E3;color:#fff" style-hover="opacity:.88">{{ editItemsLabel }}</button>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:22px;padding:8px 20px">
+          <div style="display:grid;grid-template-columns:minmax(140px,1fr) 90px 90px 80px;gap:14px;font-size:12px;color:#86868B;padding:10px 0">
+            <div>Item</div><div style="text-align:right">Price</div><div style="text-align:right">Cost</div><div style="text-align:right">Usual</div>
+          </div>
+          <sc-for list="{{ itemRows }}" as="it" hint-placeholder-count="7">
+            <div style="display:grid;grid-template-columns:minmax(140px,1fr) 90px 90px 80px;gap:14px;padding:11px 0;border-top:1px solid #F0F0F3;align-items:center">
+              <div style="font-size:15px;font-weight:500">{{ it.name }}</div>
+              <sc-if value="{{ editingItems }}" hint-placeholder-val="{{ false }}">
+                <input value="{{ it.priceRaw }}" onChange="{{ it.onprice }}" inputmode="decimal" style="width:90px;justify-self:end;box-sizing:border-box;text-align:right;font-family:Lexend,sans-serif;font-size:15px;padding:7px 12px;border:0;border-radius:999px;background:#F5F5F7;color:#1D1D1F;outline:none">
+                <input value="{{ it.costRaw }}" onChange="{{ it.oncost }}" inputmode="decimal" style="width:90px;justify-self:end;box-sizing:border-box;text-align:right;font-family:Lexend,sans-serif;font-size:15px;padding:7px 12px;border:0;border-radius:999px;background:#F5F5F7;color:#1D1D1F;outline:none">
+                <input value="{{ it.batchRaw }}" onChange="{{ it.onbatch }}" inputmode="decimal" style="width:80px;justify-self:end;box-sizing:border-box;text-align:right;font-family:Lexend,sans-serif;font-size:15px;padding:7px 12px;border:0;border-radius:999px;background:#F5F5F7;color:#1D1D1F;outline:none">
+              </sc-if>
+              <sc-if value="{{ notEditingItems }}" hint-placeholder-val="{{ true }}">
+                <div style="text-align:right;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">{{ it.price }}</div>
+                <div style="text-align:right;font-size:15px;color:#6E6E73;font-variant-numeric:tabular-nums">{{ it.cost }}</div>
+                <div style="text-align:right;font-size:15px;font-variant-numeric:tabular-nums">{{ it.batch }}</div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </div>
+      <div data-screen-label="03 Telegram" style="display:{{ p3 }};flex-direction:column;gap:24px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+          <div style="font-weight:500;font-size:40px;letter-spacing:-1.2px;line-height:1.05">Telegram</div>
+          
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:stretch">
+          <div style="flex:1 1 380px;min-width:0;background:#FFF6E0;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">Close shop now</div>
+              <div style="font-size:14px;color:#424245">Tells the team group the shop is closing and to log leftovers.</div>
+            </div>
+            <button onPointerDown="{{ tg.close.holdStart }}" onPointerUp="{{ tg.close.holdEnd }}" onPointerLeave="{{ tg.close.holdEnd }}" onPointerCancel="{{ tg.close.holdEnd }}" onContextMenu="{{ tg.close.noMenu }}" disabled="{{ tg.close.sending }}" style="appearance:none;cursor:pointer;position:relative;overflow:hidden;flex:1;min-height:150px;width:100%;border:0;border-radius:40px;background:#1D1D1F;color:#fff;font-family:Lexend,sans-serif;padding:20px 20px 20px 32px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .15s" style-active="transform:scale(.985)">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:{{ tg.close.holdPct }}%;background:#3A3A3C;border-radius:40px"></div>
+              <div style="position:relative;display:flex;flex-direction:column;gap:6px;min-width:0">
+                <div style="font-size:32px;font-weight:500;letter-spacing:-0.8px;line-height:1.05">{{ tg.close.bigLabel }}</div>
+                <div style="font-size:14px;color:#AEAEB2">{{ tg.close.bigSub }}</div>
+              </div>
+              <div style="position:relative;width:92px;height:92px;flex:none;border-radius:50%;background:{{ tg.close.ring }};display:flex;align-items:center;justify-content:center">
+                <div style="width:78px;height:78px;border-radius:50%;background:#FFF6E0;color:#1D1D1F;display:flex;align-items:center;justify-content:center;font-size:{{ tg.close.iconSize }};font-weight:600;line-height:1">{{ tg.close.icon }}</div>
+              </div>
+            </button>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:stretch">
+              <div style="flex:1 1 300px;display:flex;align-items:center;gap:10px;background:#fff;border-radius:999px;padding:6px 8px 6px 18px">
+                <div style="font-size:14px;white-space:nowrap">Auto-send at</div>
+                <div style="flex:1;min-width:0;position:relative;display:flex;align-items:center">
+                  <button onClick="{{ tg.close.openPicker }}" style="appearance:none;cursor:pointer;flex:1;min-width:0;height:40px;border:0;border-radius:999px;background:#F5F5F7;font-family:Lexend,sans-serif;font-size:16px;font-weight:600;color:#1D1D1F;white-space:nowrap" style-hover="background:#E8E8ED">{{ tg.close.timeLabel }}</button>
+                  <sc-if value="{{ tg.close.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;z-index:20;top:50px;left:50%;transform:translateX(-50%);width:280px;max-width:calc(100vw - 64px);background:#fff;border-radius:28px;box-shadow:0 16px 48px rgba(0,0,0,.16);padding:16px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px">
+                      <div style="position:relative;display:flex;justify-content:center;gap:4px">
+                        <div style="position:absolute;left:0;right:0;top:80px;height:40px;border-radius:14px;background:#F0F0F3"></div>
+                        <div ref="{{ tg.close.hoursRef }}" onScroll="{{ tg.close.hoursScroll }}" style="position:relative;width:72px;height:200px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)">
+                          <div style="height:80px"></div>
+                          <sc-for list="{{ tg.close.hours }}" as="o" hint-placeholder-count="5">
+                            <div onClick="{{ o.go }}" style="height:40px;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;font-variant-numeric:tabular-nums;font-weight:{{ o.weight }};color:{{ o.fg }}">{{ o.label }}</div>
+                          </sc-for>
+                          <div style="height:80px"></div>
+                        </div>
+                        <div ref="{{ tg.close.minsRef }}" onScroll="{{ tg.close.minsScroll }}" style="position:relative;width:72px;height:200px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)">
+                          <div style="height:80px"></div>
+                          <sc-for list="{{ tg.close.mins }}" as="o" hint-placeholder-count="5">
+                            <div onClick="{{ o.go }}" style="height:40px;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;font-variant-numeric:tabular-nums;font-weight:{{ o.weight }};color:{{ o.fg }}">{{ o.label }}</div>
+                          </sc-for>
+                          <div style="height:80px"></div>
+                        </div>
+                        <div ref="{{ tg.close.ampmRef }}" onScroll="{{ tg.close.ampmScroll }}" style="position:relative;width:72px;height:200px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)">
+                          <div style="height:80px"></div>
+                          <sc-for list="{{ tg.close.ampm }}" as="o" hint-placeholder-count="5">
+                            <div onClick="{{ o.go }}" style="height:40px;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;font-variant-numeric:tabular-nums;font-weight:{{ o.weight }};color:{{ o.fg }}">{{ o.label }}</div>
+                          </sc-for>
+                          <div style="height:80px"></div>
+                        </div>
+                      </div>
+                      <button onClick="{{ tg.close.closePicker }}" style="appearance:none;cursor:pointer;height:44px;border:0;border-radius:999px;background:#0071E3;color:#fff;font-family:Lexend,sans-serif;font-size:15px;font-weight:500">Done</button>
+                    </div>
+                  </sc-if>
+                </div>
+                <button onClick="{{ tg.close.toggleAuto }}" aria-label="Toggle auto-send" style="appearance:none;cursor:pointer;flex:none;width:52px;height:32px;border:0;border-radius:999px;padding:3px;display:flex;justify-content:{{ tg.close.knobJustify }};background:{{ tg.close.trackBg }}">
+                  <div style="width:26px;height:26px;border-radius:50%;background:#fff"></div>
+                </button>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#424245">
+              <div style="width:8px;height:8px;flex:none;border-radius:50%;background:{{ tg.close.dot }}"></div>
+              <div>{{ tg.close.status }}</div>
+            </div>
+          </div>
+          <div style="flex:1 1 380px;min-width:0;background:#EEF5FD;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="font-weight:500;font-size:24px;letter-spacing:-0.5px">Send baking list to baker</div>
+              <div style="font-size:14px;color:#424245">Sends tomorrow’s quantities straight to the baker.</div>
+            </div>
+            <div style="background:#fff;border-radius:28px;padding:18px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;padding:0 4px">
+                <div style="font-size:15px;font-weight:500">{{ tg.baker.dayLabel }}</div>
+                <div style="font-size:14px;color:#6E6E73;font-variant-numeric:tabular-nums">{{ tg.baker.total }}</div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px">
+                <sc-for list="{{ tg.baker.tiles }}" as="t" hint-placeholder-count="7">
+                  <div style="background:{{ t.bg }};border-radius:22px;padding:12px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center">
+                    <div style="font-size:26px;line-height:1">{{ t.icon }}</div>
+                    <div style="font-size:28px;font-weight:600;letter-spacing:-0.8px;line-height:1.1;font-variant-numeric:tabular-nums">{{ t.qty }}</div>
+                    <div style="font-size:12px;color:#424245;line-height:1.2">{{ t.name }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:stretch">
+              <div style="flex:1 1 300px;display:flex;align-items:center;gap:10px;background:#fff;border-radius:999px;padding:6px 8px 6px 18px">
+                <div style="font-size:14px;white-space:nowrap">Auto-send at</div>
+                <div style="flex:1;min-width:0;position:relative;display:flex;align-items:center">
+                  <button onClick="{{ tg.baker.openPicker }}" style="appearance:none;cursor:pointer;flex:1;min-width:0;height:40px;border:0;border-radius:999px;background:#F5F5F7;font-family:Lexend,sans-serif;font-size:16px;font-weight:600;color:#1D1D1F;white-space:nowrap" style-hover="background:#E8E8ED">{{ tg.baker.timeLabel }}</button>
+                  <sc-if value="{{ tg.baker.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;z-index:20;top:50px;left:50%;transform:translateX(-50%);width:280px;max-width:calc(100vw - 64px);background:#fff;border-radius:28px;box-shadow:0 16px 48px rgba(0,0,0,.16);padding:16px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px">
+                      <div style="position:relative;display:flex;justify-content:center;gap:4px">
+                        <div style="position:absolute;left:0;right:0;top:80px;height:40px;border-radius:14px;background:#F0F0F3"></div>
+                        <div ref="{{ tg.baker.hoursRef }}" onScroll="{{ tg.baker.hoursScroll }}" style="position:relative;width:72px;height:200px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)">
+                          <div style="height:80px"></div>
+                          <sc-for list="{{ tg.baker.hours }}" as="o" hint-placeholder-count="5">
+                            <div onClick="{{ o.go }}" style="height:40px;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;font-variant-numeric:tabular-nums;font-weight:{{ o.weight }};color:{{ o.fg }}">{{ o.label }}</div>
+                          </sc-for>
+                          <div style="height:80px"></div>
+                        </div>
+                        <div ref="{{ tg.baker.minsRef }}" onScroll="{{ tg.baker.minsScroll }}" style="position:relative;width:72px;height:200px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)">
+                          <div style="height:80px"></div>
+                          <sc-for list="{{ tg.baker.mins }}" as="o" hint-placeholder-count="5">
+                            <div onClick="{{ o.go }}" style="height:40px;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;font-variant-numeric:tabular-nums;font-weight:{{ o.weight }};color:{{ o.fg }}">{{ o.label }}</div>
+                          </sc-for>
+                          <div style="height:80px"></div>
+                        </div>
+                        <div ref="{{ tg.baker.ampmRef }}" onScroll="{{ tg.baker.ampmScroll }}" style="position:relative;width:72px;height:200px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)">
+                          <div style="height:80px"></div>
+                          <sc-for list="{{ tg.baker.ampm }}" as="o" hint-placeholder-count="5">
+                            <div onClick="{{ o.go }}" style="height:40px;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;font-variant-numeric:tabular-nums;font-weight:{{ o.weight }};color:{{ o.fg }}">{{ o.label }}</div>
+                          </sc-for>
+                          <div style="height:80px"></div>
+                        </div>
+                      </div>
+                      <button onClick="{{ tg.baker.closePicker }}" style="appearance:none;cursor:pointer;height:44px;border:0;border-radius:999px;background:#0071E3;color:#fff;font-family:Lexend,sans-serif;font-size:15px;font-weight:500">Done</button>
+                    </div>
+                  </sc-if>
+                </div>
+                <button onClick="{{ tg.baker.toggleAuto }}" aria-label="Toggle auto-send" style="appearance:none;cursor:pointer;flex:none;width:52px;height:32px;border:0;border-radius:999px;padding:3px;display:flex;justify-content:{{ tg.baker.knobJustify }};background:{{ tg.baker.trackBg }}">
+                  <div style="width:26px;height:26px;border-radius:50%;background:#fff"></div>
+                </button>
+              </div>
+              <button onClick="{{ tg.baker.send }}" disabled="{{ tg.baker.sending }}" style="appearance:none;cursor:pointer;flex:1 1 180px;font-size:15px;font-weight:500;padding:14px 22px;border:0;border-radius:999px;background:#0071E3;color:#fff;white-space:nowrap" style-hover="opacity:.88">{{ tg.baker.btnLabel }}</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#424245">
+              <div style="width:8px;height:8px;flex:none;border-radius:50%;background:{{ tg.baker.dot }}"></div>
+              <div>{{ tg.baker.status }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-screen-label="04 Records" style="display:{{ p4 }};flex-direction:column;gap:24px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-weight:500;font-size:40px;letter-spacing:-1.2px;line-height:1.05">Records</div>
+            <div style="font-size:14px;color:#6E6E73">Each day's plan next to what was baked, sold and left over. Newest first.</div>
+          </div>
+          <a href="/api/records.csv" download="just-right-records.csv" style="font-size:14px;font-weight:500;padding:12px 20px;border-radius:999px;background:#0071E3;color:#fff;text-decoration:none;white-space:nowrap" style-hover="opacity:.88;color:#fff">Download CSV</a>
+        </div>
+        <sc-if value="{{ noRecords }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border-radius:28px;padding:24px;font-size:15px;color:#6E6E73">No records yet. They appear after the first plan or closing count.</div>
+        </sc-if>
+        <sc-for list="{{ records }}" as="d" hint-placeholder-count="4">
+          <div style="background:{{ d.cardBg }};border:1px solid {{ d.cardBorder }};border-radius:28px;padding:20px 0 14px;display:flex;flex-direction:column;gap:10px">
+            <div style="padding:0 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="font-weight:500;font-size:20px">{{ d.dateLabel }}</div>
+                <sc-if value="{{ d.dayTag }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:12px;font-weight:600;padding:5px 12px;border-radius:999px;background:{{ d.dayTagBg }};color:{{ d.dayTagFg }}">{{ d.dayTag }}</div>
+                </sc-if>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <div style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:{{ d.planBg }}">{{ d.planLabel }}</div>
+                <div style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:{{ d.sourceBg }}">{{ d.sourceLabel }}</div>
+                <sc-if value="{{ d.event }}" hint-placeholder-val="{{ false }}">
+                  <div title="{{ d.event }}" style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:#EDEDF0">One-off event</div>
+                </sc-if>
+              </div>
+            </div>
+            <sc-if value="{{ d.counted }}" hint-placeholder-val="{{ true }}">
+              <div style="overflow-x:auto">
+                <div style="min-width:560px;padding:0 12px">
+                  <div style="display:grid;grid-template-columns:minmax(140px,1fr) 70px 70px 70px 70px 110px;gap:12px;padding:6px 12px;font-size:12px;color:#86868B">
+                    <div>Item</div><div style="text-align:right">Planned</div><div style="text-align:right">Baked</div><div style="text-align:right">Sold</div><div style="text-align:right">Left</div><div style="text-align:right">Sold out</div>
+                  </div>
+                  <sc-for list="{{ d.rows }}" as="r" hint-placeholder-count="3">
+                    <div style="display:grid;grid-template-columns:minmax(140px,1fr) 70px 70px 70px 70px 110px;gap:12px;padding:9px 12px;border-radius:18px;align-items:center;font-size:15px;font-variant-numeric:tabular-nums" style-hover="background:#F5F5F7">
+                      <div style="font-weight:500">{{ r.item }}</div>
+                      <div style="text-align:right;color:#86868B">{{ r.planned }}</div>
+                      <div style="text-align:right">{{ r.baked }}</div>
+                      <div style="text-align:right">{{ r.sold }}</div>
+                      <div style="text-align:right;font-weight:600;color:{{ r.leftColor }}">{{ r.left }}</div>
+                      <div style="text-align:right;font-size:14px;color:#424245">{{ r.soldOut }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="padding:0 24px;font-size:14px;color:#424245">{{ d.footer }}</div>
+            </sc-if>
+            <sc-if value="{{ d.notCounted }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 24px 6px;font-size:14px;color:#6E6E73">{{ d.waitingNote }}</div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1D1D1F;color:#fff;padding:14px 24px;border-radius:999px;font-size:15px;font-weight:500;z-index:10">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;planStatus&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;api&quot;,&quot;pending&quot;,&quot;approved&quot;],&quot;default&quot;:&quot;api&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const ME = 'Aina Rahman';
+const SAMPLE = {
+  plan: { date: '2026-10-24', status: 'pending', approved_by: null, approved_at: null, items: [
+    { item: 'Croissant', usual: 40, bake: 46, reason: 'Sold out before 2 PM 3 times this week', edited: false },
+    { item: 'Sourdough', usual: 15, bake: 12, reason: '3–4 left over most days', edited: false },
+    { item: 'Muffin', usual: 24, bake: 24, reason: 'About right', edited: false },
+    { item: 'Kaya bun', usual: 30, bake: 40, reason: 'Office order of 10 for Saturday', edited: true },
+    { item: 'Cinnamon roll', usual: 20, bake: 22, reason: 'Sold out once, around 11 AM', edited: false },
+    { item: 'Baguette', usual: 18, bake: 14, reason: 'Leftovers every day this week', edited: false },
+    { item: 'Banana bread', usual: 12, bake: 10, reason: 'Slow mid-week', edited: false }
+  ] },
+  waste: {
+    this_week: [
+      { item: 'Croissant', leftovers: 2, cost: 2, last_week: 5 }, { item: 'Sourdough', leftovers: 10, cost: 6, last_week: 13 },
+      { item: 'Muffin', leftovers: 9, cost: 2, last_week: 10 }, { item: 'Kaya bun', leftovers: 14, cost: 1, last_week: 16 },
+      { item: 'Cinnamon roll', leftovers: 6, cost: 2.2, last_week: 8 }, { item: 'Baguette', leftovers: 12, cost: 2, last_week: 15 },
+      { item: 'Banana bread', leftovers: 7, cost: 1.8, last_week: 9 }
+    ],
+    sellouts: [
+      { item: 'Cinnamon roll', day: 'Sat', time: '11:20' }, { item: 'Croissant', day: 'Sat', time: '13:40' },
+      { item: 'Croissant', day: 'Tue', time: '13:55' }, { item: 'Croissant', day: 'Wed', time: '12:50' }
+    ],
+    last_week_sellouts: 5,
+    weekly: [{ week: '7 Sep', rm: 238 }, { week: '14 Sep', rm: 231 }, { week: '21 Sep', rm: 219 }, { week: '28 Sep', rm: 212 }, { week: '5 Oct', rm: 201 }]
+  },
+  log: [
+    { who: 'Telegram bot', type: 'plan', action: "Sent tomorrow's plan to your Telegram", at: '2026-10-23T14:00:00' },
+    { who: 'Planner', type: 'plan', action: "Made tomorrow's plan (7 items)", at: '2026-10-23T13:58:00' },
+    { who: ME, type: 'count', action: 'Logged closing count: 60 leftovers', at: '2026-10-22T19:01:00' },
+    { who: ME, type: 'approval', action: "Approved Thursday's plan", at: '2026-10-22T14:20:00' },
+    { who: ME, type: 'edit', action: 'Edited Kaya bun 30 → 40: “office order”', at: '2026-10-22T14:11:00' },
+    { who: ME, type: 'count', action: 'Logged closing count: 52 leftovers', at: '2026-10-21T19:04:00' }
+  ],
+  items: [
+    { name: 'Croissant', price: 8, cost: 2, usual_batch: 40 }, { name: 'Sourdough', price: 18, cost: 6, usual_batch: 15 },
+    { name: 'Muffin', price: 6, cost: 2, usual_batch: 24 }, { name: 'Kaya bun', price: 3.5, cost: 1, usual_batch: 30 },
+    { name: 'Cinnamon roll', price: 7, cost: 2.2, usual_batch: 20 }, { name: 'Baguette', price: 7, cost: 2, usual_batch: 18 },
+    { name: 'Banana bread', price: 6, cost: 1.8, usual_batch: 12 }
+  ]
+};
+const ICONS = { croissant: '🥐', sourdough: '🍞', 'sourdough loaf': '🍞', muffin: '🧁', 'banana muffin': '🧁', 'kaya bun': '🥥', 'cinnamon roll': '🥨', baguette: '🥖', 'banana bread': '🍌' };
+const MIX = ['#0071E3', '#5AC8FA', '#FF9F0A', '#D1D1D6'];
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const TAG = { count: '#', approval: '✓', edit: '✎', plan: '→' };
+const TAG_COLOR = { count: ['#FFF6E0', '#8A5A00'], approval: ['#E8F3EA', '#248A3D'], edit: ['#F3EEFC', '#8944AB'], plan: ['#E8F1FC', '#0071E3'] };
+const NOW = new Date('2026-10-23T16:00:00');
+const rm = n => 'RM ' + (Math.round(n * 100) % 100 ? Number(n).toFixed(2) : Math.round(n));
+const clock = t => { const [h, m] = String(t).split(':').map(Number); return { h: h + (m || 0) / 60, label: `${((h + 11) % 12) + 1}:${String(m || 0).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}` }; };
+const tClock = d => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+const ago = d => { const now = new Date() > NOW && new Date() - NOW > 864e5 * 30 ? NOW : new Date(); const h = Math.round((now - d) / 36e5); if (h < 1) return 'just now'; if (h < 24) return h + 'h ago'; const dd = Math.round(h / 24); return dd + (dd === 1 ? ' day ago' : ' days ago'); };
+
+class Component extends DCLogic {
+  state = { plan: SAMPLE.plan, log: SAMPLE.log, waste: SAMPLE.waste, items: SAMPLE.items, records: [], todayPlan: null, forecast: null, sending: false, sent: null, toast: null, approvedLocal: null, logType: 'all', active: (() => { try { return (['insights', 'telegram', 'records'].includes(localStorage.getItem('bw-page')) ? localStorage.getItem('bw-page') : 'ops'); } catch (e) { return 'ops'; } })(), vw: window.innerWidth };
+  chartRef = React.createRef();
+  fcChartRef = React.createRef();
+  // Timers run on the server (scheduler.py), so they fire even when this page is closed.
+  tg = { close: { time: '18:00', auto: true, last: null }, baker: { time: '20:00', auto: true, last: null } };
+  applySchedule(sch) { if (!sch) return; ['close', 'baker'].forEach(k => { if (sch[k]) this.tg[k] = { ...this.tg[k], time: sch[k].time, auto: sch[k].auto }; }); this.forceUpdate(); }
+  tgSave() {
+    this.forceUpdate();
+    clearTimeout(this.tgSaveT);   // wait until the time wheel stops scrolling, then save once
+    this.tgSaveT = setTimeout(async () => {
+      const body = {}; ['close', 'baker'].forEach(k => { body[k] = { time: this.tg[k].time, auto: this.tg[k].auto }; });
+      const r = await this.post('/api/schedule', body);
+      if (r.ok) { this.applySchedule(r.data); this.refresh(); } else this.toast(r.data.error || 'Could not save the timer');
+    }, 600);
+  }
+  tgSend = async (k, auto) => {
+    if (this.tgBusy === k) return;
+    this.tgBusy = k; this.forceUpdate();
+    const r = await this.post('/api/telegram/' + k);
+    this.tgBusy = null;
+    if (!r.ok) { this.forceUpdate(); this.toast(r.data.error || 'Could not reach Telegram'); return; }
+    this.tg[k] = { ...this.tg[k], last: { at: Date.now(), auto: !!auto, day: new Date().toDateString() + ' ' + this.tg[k].time } };
+    this.forceUpdate();
+    this.refresh();
+    this.toast(k === 'close' ? 'Close-shop message sent' : 'Baking list sent to baker');
+  };
+  tgTick = () => this.refresh();   // pick up what the server timers did
+  wheels = {}; wheelFns = {};
+  wheelRef(k, col, idx) {
+    const id = k + col; this.wheelIdx = this.wheelIdx || {}; this.wheelIdx[id] = idx;
+    return this.wheelFns[id + 'r'] || (this.wheelFns[id + 'r'] = el => { this.wheels[id] = el; if (el) el.scrollTop = this.wheelIdx[id] * 40; });
+  }
+  wheelApply(k, col, i) {
+    const [H, M] = this.tg[k].time.split(':').map(Number);
+    let h = H, m = M;
+    if (col === 'hours') h = ((i + 1) % 12) + (H >= 12 ? 12 : 0);
+    if (col === 'mins') m = i;
+    if (col === 'ampm') h = (H % 12) + (i ? 12 : 0);
+    this.tg[k] = { ...this.tg[k], time: String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') };
+    this.tgSave();
+  }
+  wheelScroll(k, col) {
+    const id = k + col;
+    return this.wheelFns[id + 's'] || (this.wheelFns[id + 's'] = e => {
+      const el = e.currentTarget; clearTimeout(this['wt' + id]);
+      this['wt' + id] = setTimeout(() => { const max = col === 'hours' ? 11 : col === 'mins' ? 59 : 1; this.wheelApply(k, col, Math.max(0, Math.min(max, Math.round(el.scrollTop / 40)))); }, 90);
+    });
+  }
+  hold = 0;
+  holdStart(e) {
+    if (this.tgBusy) return;
+    try { e.currentTarget.setPointerCapture && e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {}
+    cancelAnimationFrame(this.holdRaf); this.holding = true;
+    const t0 = performance.now() - this.hold * 1500;
+    const step = now => {
+      if (!this.holding) return;
+      this.hold = Math.min(1, (now - t0) / 1500); this.forceUpdate();
+      if (this.hold >= 1) { this.holding = false; this.tgSend('close', false).then(() => { this.hold = 0; this.forceUpdate(); }); return; }
+      this.holdRaf = requestAnimationFrame(step);
+    };
+    this.holdRaf = requestAnimationFrame(step);
+  }
+  holdEnd() {
+    if (!this.holding) return;
+    this.holding = false; cancelAnimationFrame(this.holdRaf);
+    const back = () => { this.hold = Math.max(0, this.hold - 0.06); this.forceUpdate(); if (this.hold > 0 && !this.holding) this.holdRaf = requestAnimationFrame(back); };
+    this.holdRaf = requestAnimationFrame(back);
+  }
+  tgVals(rows, approved) {
+    const W = this.state.waste || {};
+    const fmtT = t => { const [h, m] = t.split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`; };
+    const left = (rows || []).filter(r => r.leftover).map(r => `${r.item} ${r.leftover}`).join(', ');
+    this.tgText = {
+      close: `🔒 Shop is closing now.\nPlease pack up the counter and log today's leftovers.${left ? '\nLeftovers: ' + left : ''}\nTomorrow's plan: ${approved ? 'approved' : 'still waiting for approval'}.`,
+      baker: `🥐 Baking list for tomorrow\n` + (rows || []).map(r => `• ${r.item}: ${r.bake}`).join('\n')
+    };
+    const one = k => {
+      const c = this.tg[k], busy = this.tgBusy === k;
+      const [H, M] = c.time.split(':').map(Number), pm = H >= 12, h12 = ((H + 11) % 12) + 1;
+      const pick = (kk, col, i) => { const el = this.wheels[kk + col]; if (el) el.scrollTo({ top: i * 40, behavior: 'smooth' }); this.wheelApply(kk, col, i); };
+      const setMin = t => { t = ((t % 1440) + 1440) % 1440; this.tg[k] = { ...this.tg[k], time: String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0') }; this.tgSave(); };
+      const sentToday = c.last && new Date(c.last.at).toDateString() === new Date().toDateString();
+      let status = c.auto ? `Auto-send on · goes out at ${fmtT(c.time)}` : 'Auto-send off · send it manually';
+      if (sentToday) status = `Sent ${c.last.auto ? 'automatically' : 'by you'} at ${tClock(new Date(c.last.at))}` + (c.auto ? ` · next at ${fmtT(c.time)}` : '');
+      return {
+        preview: this.tgText[k], time: c.time, sending: busy,
+        btnLabel: busy ? 'Sending…' : 'Send to Telegram',
+        bigLabel: busy ? 'Sending…' : (k === 'close' && this.hold > 0 ? 'Keep holding…' : 'Hold to close shop'),
+        bigSub: busy ? 'Telling the team on Telegram' : 'Press and hold for 1.5 seconds · sends to Telegram',
+        holdPct: k === 'close' ? Math.round((this.hold || 0) * 100) : 0,
+        ring: k === 'close' ? `conic-gradient(#FF9F0A ${Math.round((this.hold || 0) * 360)}deg, #3A3A3C 0deg)` : '#3A3A3C',
+        icon: busy ? '…' : (k === 'close' && this.hold > 0 ? Math.max(1, Math.ceil((1 - this.hold) * 1.5 * 10) / 10).toFixed(1) : '→'),
+        iconSize: k === 'close' && this.hold > 0 && !busy ? '22px' : '34px',
+        holdStart: e => this.holdStart(e), holdEnd: () => this.holdEnd(), noMenu: e => e.preventDefault(),
+        trackBg: c.auto ? '#34C759' : '#D1D1D6', knobJustify: c.auto ? 'flex-end' : 'flex-start',
+        dot: sentToday ? '#248A3D' : (c.auto ? '#1D1D1F' : '#AEAEB2'), status,
+        timeLabel: fmtT(c.time), open: this.tgOpen === k,
+        openPicker: () => { this.tgOpen = this.tgOpen === k ? null : k; this.forceUpdate(); },
+        closePicker: () => { this.tgOpen = null; this.forceUpdate(); },
+        hours: [1,2,3,4,5,6,7,8,9,10,11,12].map(h => ({ label: String(h), weight: h12 === h ? 600 : 400, fg: h12 === h ? '#1D1D1F' : '#8E8E93', go: () => pick(k, 'hours', h - 1) })),
+        mins: Array.from({ length: 60 }, (_, m) => ({ label: String(m).padStart(2, '0'), weight: M === m ? 600 : 400, fg: M === m ? '#1D1D1F' : '#8E8E93', go: () => pick(k, 'mins', m) })),
+        ampm: ['AM', 'PM'].map((a, i) => ({ label: a, weight: (a === 'PM') === pm ? 600 : 400, fg: (a === 'PM') === pm ? '#1D1D1F' : '#8E8E93', go: () => pick(k, 'ampm', i) })),
+        hoursRef: this.wheelRef(k, 'hours', h12 - 1), minsRef: this.wheelRef(k, 'mins', M), ampmRef: this.wheelRef(k, 'ampm', pm ? 1 : 0),
+        hoursScroll: this.wheelScroll(k, 'hours'), minsScroll: this.wheelScroll(k, 'mins'), ampmScroll: this.wheelScroll(k, 'ampm'),
+        toggleAuto: () => { this.tg[k] = { ...c, auto: !c.auto }; this.tgSave(); },
+        send: () => this.tgSend(k, false)
+      };
+    };
+    const baker = one('baker'), tom = new Date(); tom.setDate(tom.getDate() + 1);
+    baker.tiles = (rows || []).map(r => ({ icon: r.initial, qty: r.bake, name: r.item, bg: r.dotBg }));
+    baker.total = `${(rows || []).reduce((a, r) => a + (Number(r.bake) || 0), 0)} pieces · ${(rows || []).length} items`;
+    baker.dayLabel = 'For ' + tom.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+    return { close: one('close'), baker };
+  }
+  toggleItems = () => {
+    if (!this.state.editingItems) return this.setState({ editingItems: true, drafts: [] });
+    const num = (v, fb) => { const n = parseFloat(String(v ?? '').replace(/[^0-9.]/g, '')); return isFinite(n) ? n : fb; };
+    const items = (this.state.items || []).map((it, i) => { const d = (this.state.drafts || [])[i] || {}, b = it.usual_batch ?? it.batch;
+      return { ...it, price: num(d.price, it.price), cost: num(d.cost, it.cost), usual_batch: Math.round(num(d.batch, b)), batch: Math.round(num(d.batch, b)) }; });
+    this.post('/api/items', items.map(it => ({ id: it.id, name: it.name, price: it.price, cost: it.cost, usual_batch: it.usual_batch }))).then(r => {
+      if (!r.ok) return this.toast(r.data.error || 'Could not save items');
+      this.setState({ items: r.data, editingItems: false, drafts: [] });
+      this.toast('Items and costs saved');
+      this.refresh();
+    });
+  };
+
+  async get(path, fallback) { try { const r = await fetch(path); if (!r.ok) throw 0; return await r.json(); } catch (e) { return fallback; } }
+  async post(path, body) {
+    try {
+      const r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body ?? {}) });
+      return { ok: r.ok, data: await r.json().catch(() => ({})) };
+    } catch (e) { return { ok: false, data: { error: 'Server not reachable' } }; }
+  }
+  // Re-read the real state after any action (and every 30 s, to show what the timers or Telegram did).
+  async refresh() {
+    const [plan, log, waste, records, todayPlan] = await Promise.all([this.get('/api/plan', null), this.get('/api/log', null), this.get('/api/waste', null), this.get('/api/records', null), this.get('/api/plan/today', null)]);
+    this.setState(s => ({ plan: plan || s.plan, log: log || s.log, waste: waste || s.waste, records: records || s.records, todayPlan: todayPlan || s.todayPlan }), () => waste && this.drawChart());
+  }
+  async componentDidMount() { this.tgTimer = setInterval(this.tgTick, 30000);
+    this.get('/api/schedule', null).then(sch => this.applySchedule(sch));
+    window.addEventListener('resize', this.onResize);
+    this.drawChart();
+    const [plan, log, waste, items] = await Promise.all([
+      this.get('/api/plan', SAMPLE.plan), this.get('/api/log', SAMPLE.log), this.get('/api/waste', SAMPLE.waste), this.get('/api/items', SAMPLE.items)
+    ]);
+    this.setState({ plan, log, waste, items }, () => this.drawChart());
+    this.get('/api/records', []).then(records => this.setState({ records }));
+    this.get('/api/plan/today', null).then(todayPlan => this.setState({ todayPlan }));
+    this.get('/api/forecast', null).then(forecast => this.setState({ forecast }, () => this.drawForecastChart()));
+  }
+  componentWillUnmount() { clearInterval(this.tgTimer); this.chart && this.chart.destroy(); this.fcChart && this.fcChart.destroy(); clearTimeout(this.tt); window.removeEventListener('resize', this.onResize); }
+  onResize = () => { const vw = window.innerWidth; if (vw !== this.state.vw) this.setState({ vw }); };
+  layout(vw) {
+    if (vw >= 900) return { cols: (vw >= 1240 ? '260px' : '240px') + ' minmax(0,1fr)', asideCol: '1', asideRow: '1', mainCol: '2', mainRow: '1', asidePos: 'sticky', asideMinH: 'calc(100vh - 48px)', pad: vw >= 1240 ? '36px 36px' : '32px 28px' };
+    return { cols: 'minmax(0,1fr)', asideCol: '1', asideRow: '1', mainCol: '1', mainRow: '2', asidePos: 'static', asideMinH: '0', pad: '28px 20px' };
+  }
+  componentDidUpdate(pp, ps) { if (ps.active !== this.state.active) { try { localStorage.setItem('bw-page', this.state.active); } catch (e) {} if (this.state.active === 'ops') setTimeout(() => this.chart && this.chart.resize(), 0); if (this.state.active === 'insights') setTimeout(() => this.fcChart && this.fcChart.resize(), 0); } }
+
+  // AI accuracy: 7-day average miss per day, AI vs the old 28-day average (from GET /api/forecast).
+  drawForecastChart(tries = 0) {
+    const cv = this.fcChartRef.current, days = (this.state.forecast || {}).days || [];
+    if (!cv || !window.Chart) { if (tries < 50) setTimeout(() => this.drawForecastChart(tries + 1), 100); return; }
+    if (this.fcChart) this.fcChart.destroy();
+    const roll = key => days.map((d, i) => { const w = days.slice(Math.max(0, i - 6), i + 1); return +(w.reduce((a, x) => a + x[key], 0) / w.length).toFixed(2); });
+    const labels = days.map(d => new Date(d.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }));
+    const font = { family: 'Lexend', size: 11 };
+    this.fcChart = new window.Chart(cv, { type: 'line',
+      data: { labels, datasets: [
+        { label: 'AI forecast', data: roll('ai'), borderColor: '#0071E3', backgroundColor: '#0071E3', borderWidth: 3, pointRadius: 0, tension: 0.35 },
+        { label: 'Old average', data: roll('old'), borderColor: '#C7C7CC', backgroundColor: '#C7C7CC', borderWidth: 3, pointRadius: 0, tension: 0.35 }
+      ] },
+      options: { responsive: true, maintainAspectRatio: false, animation: { duration: 400 }, interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'bottom', labels: { font, usePointStyle: true, boxWidth: 8 } },
+          tooltip: { backgroundColor: '#1D1D1F', cornerRadius: 12, padding: 10, callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y} pieces off` } } },
+        scales: { x: { grid: { display: false }, border: { display: false }, ticks: { font, maxTicksLimit: 8, maxRotation: 0 } },
+          y: { beginAtZero: true, grid: { color: '#EEE' }, border: { display: false }, ticks: { font, maxTicksLimit: 5 } } } } });
+  }
+  forecastVals() {
+    const f = this.state.forecast;
+    if (!f) return { fcSub: 'Loading…', fcTomorrow: '', fcAi: '–', fcOld: '–', fcBetter: '–', fcEffects: [], fcChartRef: this.fcChartRef };
+    const pct = f.old_miss ? Math.round((1 - f.ai_miss / f.old_miss) * 100) : 0;
+    const t = f.tomorrow || {};
+    const td = new Date((t.date || '') + 'T00:00:00');
+    return {
+      fcSub: `Learns from ${f.trained_days} days of sales, the weekday and the weather. Retrains after every closing count.` + (f.event_days ? ` ${f.event_days} one-off event day(s) count less.` : ''),
+      fcTomorrow: `${isNaN(td) ? 'Tomorrow' : td.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}: ${t.rain >= 1 ? '🌧 ' + t.rain + ' mm rain' : '☀️ dry'} · ${Math.round(t.temp)} °C`,
+      fcAi: `${f.ai_miss} pcs`, fcOld: `${f.old_miss} pcs`, fcBetter: `${pct}%`,
+      fcEffects: (f.effects || []).map(e => {
+        const days = Object.entries(e.weekday).sort((a, b) => b[1] - a[1]);
+        const fmt = v => (v > 0 ? '+' : '') + v;
+        return { item: e.item, text: `${days[0][0]} ${fmt(days[0][1])} · ${days[6][0]} ${fmt(days[6][1])} · 10 mm rain ${fmt(e.rain_10mm)}` };
+      }),
+      fcChartRef: this.fcChartRef
+    };
+  }
+  drawChart(tries = 0) {
+    const cv = this.chartRef.current;
+    if (!cv || !window.Chart) { if (tries < 50) setTimeout(() => this.drawChart(tries + 1), 100); return; }
+    if (this.chart) this.chart.destroy();
+    const W = this.state.waste || {}, tw = W.this_week || [];
+    const thisRm = tw.reduce((a, x) => a + (x.leftovers ?? 0) * (x.cost ?? 0), 0), lastRm = W.last_week_rm ?? tw.reduce((a, x) => a + (x.last_week ?? 0) * (x.cost ?? 0), 0);
+    const weeks = [...(W.weekly || []).slice(-6).map(w => ({ label: w.week, v: w.rm })), { label: 'Last wk', v: lastRm }, { label: 'This wk', v: thisRm }];
+    const font = { family: 'Lexend', size: 11 };
+    this.chart = new window.Chart(cv, { type: 'bar',
+      data: { labels: weeks.map(w => w.label), datasets: [
+        { label: 'Waste', data: weeks.map(w => Math.round(w.v)), backgroundColor: weeks.map((w, i) => i === weeks.length - 1 ? '#0071E3' : '#C7D9EE'), hoverBackgroundColor: weeks.map((w, i) => i === weeks.length - 1 ? '#0071E3' : '#A9C5E6'), borderRadius: 8, borderSkipped: false, maxBarThickness: 36, barPercentage: 0.75, categoryPercentage: 0.85 }
+      ] },
+      options: { responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1D1D1F', cornerRadius: 12, padding: 10, titleFont: { family: 'Lexend', weight: '500' }, bodyFont: { family: 'Lexend', size: 12 }, callbacks: { label: c => rm(c.parsed.y) } } },
+        scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: '#1D1D1F', font: { family: 'Lexend', size: 11 }, maxRotation: 0, autoSkip: true, autoSkipPadding: 8 } },
+          y: { beginAtZero: true, grid: { color: '#F0F0F3' }, border: { display: false }, ticks: { color: '#86868B', font, maxTicksLimit: 4, callback: v => 'RM ' + v } } } } });
+  }
+
+  toast(msg) { this.setState({ toast: msg }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2600); }
+  approvePlan = async () => {
+    const r = await this.post('/api/approve');
+    if (!r.ok) return this.toast(r.data.error || 'Could not approve');
+    this.setState({ plan: r.data, approvedLocal: null });
+    this.toast('Plan approved · bake list sent to baker');
+    this.refresh();
+  };
+  recalcPlan = async () => {
+    this.setState({ recalcing: true });
+    const r = await this.post('/api/recalculate');
+    this.setState({ recalcing: false, ...(r.ok ? { plan: r.data } : {}) });
+    this.toast(r.ok ? 'New amounts worked out · send to Telegram to approve' : 'Could not recalculate');
+    this.refresh();
+  };
+  sendPlan = async () => {
+    this.setState({ sending: true });
+    let ok = true;
+    try { const r = await fetch('/api/send-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: this.state.plan.date }) }); if (!r.ok) throw 0; } catch (e) { ok = false; }
+    await new Promise(r => setTimeout(r, 600));
+    this.setState({ sending: false, sent: ok ? new Date().toISOString() : this.state.sent });
+    this.toast(ok ? 'Plan sent to your Telegram' : 'Could not send the plan');
+    this.refresh();
+  };
+
+  saveEdit = i => {
+    const items = (this.state.plan.items || []).slice(), it = items[i]; if (!it) return;
+    const old = it.bake ?? it.final_qty ?? it.usual ?? 0, n = parseInt(String(this.state.editVal).replace(/[^0-9]/g, ''), 10);
+    if (!isFinite(n) || n === old) return this.setState({ editRow: null });
+    const wasApproved = this.state.plan.status === 'approved';
+    this.setState({ editRow: null });
+    this.post('/api/plan/item', { item: it.item || it.name, qty: n }).then(r => {
+      if (!r.ok) return this.toast(r.data.error || 'Could not save');
+      this.setState({ plan: r.data, approvedLocal: null });
+      this.toast(wasApproved ? 'Saved · approve the plan again' : 'Quantity saved');
+      this.refresh();
+    });
+  };
+  // Today's plan card: what the baker is working from today.
+  todayVals() {
+    const t = this.state.todayPlan || { status: 'none', items: [] }, items = t.items || [];
+    const dt = new Date((t.date || '') + 'T00:00:00');
+    const approved = t.status === 'approved';
+    return {
+      todayDate: isNaN(dt) ? 'Today' : dt.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }),
+      todayHas: items.length > 0, todayNone: items.length === 0,
+      todayChip: t.status === 'none' ? 'No plan' : approved ? 'Approved by ' + (t.approved_by || 'manager') : 'Was never approved',
+      todayChipBg: approved ? '#E8F3EA' : t.status === 'none' ? '#F0F0F3' : '#FFF4E5',
+      todayTiles: items.map(r => ({ icon: ICONS[String(r.item).toLowerCase()] || '🍞', qty: r.bake, name: r.item, bg: '#F5F5F7' })),
+      todaySummary: `${items.reduce((a, r) => a + (Number(r.bake) || 0), 0)} pieces · ${items.length} items`
+    };
+  }
+  // Records page: one card per day (from GET /api/records).
+  recordVals() {
+    const dash = v => (v === null || v === undefined ? '–' : v);
+    const records = (this.state.records || []).map(d => {
+      const plan = d.plan, approved = plan && plan.status === 'approved';
+      const dt = new Date(d.date + 'T00:00:00');
+      const now = new Date(), tom = new Date(); tom.setDate(now.getDate() + 1);
+      const dayTag = dt.toDateString() === now.toDateString() ? 'Today' : dt.toDateString() === tom.toDateString() ? 'Tomorrow' : null;
+      return {
+        cardBg: dayTag === 'Today' ? '#F0F6FE' : '#fff', cardBorder: dayTag === 'Today' ? '#CFE2FA' : '#fff',
+        dayTag, dayTagBg: dayTag === 'Today' ? '#0071E3' : '#FFF6E0', dayTagFg: dayTag === 'Today' ? '#fff' : '#1D1D1F',
+        dateLabel: isNaN(dt) ? d.date : dt.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }),
+        planLabel: !plan ? 'No plan saved' : approved ? 'Approved by ' + (plan.approved_by || 'manager') : 'Plan pending',
+        planBg: !plan ? '#F0F0F3' : approved ? '#E8F3EA' : '#FFF4E5',
+        sourceLabel: d.source === 'count' ? 'Staff count' : d.source === 'sample' ? 'Sample data' : 'Not counted yet',
+        sourceBg: d.source === 'count' ? '#E8F1FC' : d.source === 'sample' ? '#FFF6E0' : '#F0F0F3',
+        counted: d.counted, notCounted: !d.counted, event: d.event || null,
+        waitingNote: 'No closing count yet' + (d.items.length ? ' · planned: ' + d.items.map(r => `${r.item} ${dash(r.planned)}`).join(', ') : ''),
+        footer: `${d.leftover} left over · ${rm(d.waste_rm)} waste · ${d.sellouts} sold out`,
+        rows: d.items.map(r => ({ item: r.item, planned: dash(r.planned), baked: dash(r.baked), sold: dash(r.sold), left: dash(r.leftover),
+          leftColor: r.leftover ? '#BF4800' : '#248A3D', soldOut: r.sold_out ? '~' + clock(r.sold_out).label : '–' }))
+      };
+    });
+    return { records, noRecords: records.length === 0 };
+  }
+  renderVals() {
+    const { plan, log, waste, items, sending, sent, toast, approvedLocal, logType, active } = this.state;
+    const p = plan || {}, W = waste || {};
+    const status = this.props.planStatus && this.props.planStatus !== 'api' ? this.props.planStatus : (p.status || 'pending');
+    const approved = !!approvedLocal || status === 'approved';
+    const by = approvedLocal ? approvedLocal.by : (p.approved_by || ME);
+    const at = new Date(approvedLocal ? approvedLocal.at : (p.approved_at || '2026-10-23T14:20:00'));
+    const rows = (p.items || []).map((it, i) => {
+      // Compared with the day before (what was baked then), not the usual batch.
+      const prev = it.previous ?? null, bake = it.bake ?? it.final_qty ?? 0, d = prev === null ? null : bake - prev, usual = prev === null ? '–' : prev;
+      const edited = !!(it.edited ?? it.manager_edited), name = it.item || it.name;
+      return { item: name, usual, bake, reason: it.reason || '', slotId: 'item-' + String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        delta: d === null ? '' : d === 0 ? '=' : (d > 0 ? '↑' + d : '↓' + Math.abs(d)), deltaColor: d > 0 ? '#248A3D' : d < 0 ? '#BF4800' : '#86868B',
+        initial: ICONS[String(name).toLowerCase()] || '🍞', dotBg: d > 0 ? '#EDEDF0' : d < 0 ? '#F5F5F7' : '#F0F0F3',
+        source: edited ? 'You edited' : 'Planner', srcBg: edited ? '#F3EEFC' : '#E8F1FC',
+        editing: this.state.editRow === i, notEditing: this.state.editRow !== i, editVal: this.state.editVal ?? '',
+        startEdit: () => this.setState({ editRow: i, editVal: String(bake) }),
+        onEditInput: e => this.setState({ editVal: e.target.value }),
+        onEditKey: e => { if (e.key === 'Enter') this.saveEdit(i); if (e.key === 'Escape') this.setState({ editRow: null }); },
+        saveEdit: () => this.saveEdit(i), cancelEdit: () => this.setState({ editRow: null }) };
+    });
+    const tw = (W.this_week || []).map(x => ({ item: x.item, total: (x.leftovers ?? 0) * (x.cost ?? 0), last: (x.last_week ?? 0) * (x.cost ?? 0) }));
+    const total = tw.reduce((a, x) => a + x.total, 0), lastRm = W.last_week_rm ?? tw.reduce((a, x) => a + x.last, 0), diff = total - lastRm;
+    const sorted = tw.slice().sort((a, b) => b.total - a.total);
+    const top = sorted.slice(0, 3), other = sorted.slice(3).reduce((a, x) => a + x.total, 0);
+    const mix = [...top.map(x => ({ label: x.item, v: x.total })), { label: 'Everything else', v: other }].map((m, i) => ({ ...m, rm: rm(m.v), color: MIX[i], flex: Math.max(1, Math.round(m.v)) }));
+    const so = (W.sellouts || []).map(s => ({ ...s, c: clock(s.time) }));
+    const perDay = DAYS.map(d => so.filter(s => s.day === d).length), maxDay = Math.max(2, ...perDay);
+    const avgH = so.length ? so.reduce((a, s) => a + s.c.h, 0) / so.length : 0;
+    const logs = (log || []).map(l => ({ who: l.who || 'Someone', type: l.type || 'plan', action: l.action || '', at: new Date(l.at) }));
+    const d = new Date(p.date);
+    const dateStr = isNaN(d) ? (p.date || '') : d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    const go = id => e => { e && e.preventDefault && e.preventDefault(); window.scrollTo(0, 0); this.setState({ active: id }); };
+    return {
+      L: this.layout(this.state.vw),
+      p1: active === 'ops' ? 'flex' : 'none', p2: active === 'insights' ? 'flex' : 'none', p3: active === 'telegram' ? 'flex' : 'none', p4: active === 'records' ? 'flex' : 'none',
+      tg: this.tgVals(rows, approved),
+      prevLabel: (() => { const d = new Date(p.date + 'T00:00:00'); d.setDate(d.getDate() - 1); return isNaN(d) ? 'Day before' : d.toDateString() === new Date().toDateString() ? 'Today' : d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' }); })(),
+      todayLabel: new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }),
+      nav: [['ops', 'Daily operations', '▦', '#'], ['insights', 'Insights & setup', '◔', '#'], ['telegram', 'Telegram', '✈', '#'], ['records', 'Records', '☰', '#']]
+        .map(([id, label, icon, href]) => ({ label, icon, href, go: go(id), bg: active === id ? '#F5F5F7' : 'transparent', iconBg: active === id ? '#0071E3' : '#F5F5F7', iconFg: active === id ? '#fff' : '#1D1D1F', badge: id === 'ops' && !approved ? '1' : null })),
+      managerName: ME,
+      mix,
+      selloutCount: so.length,
+      selloutSub: `${so.length} times · ${W.last_week_sellouts ?? '–'} last week`,
+      selloutDays: DAYS.map((day, i) => ({ day, h: Math.round(perDay[i] / maxDay * 100), restH: perDay[i] ? 0 : 6 })),
+      selloutRows: so.map(s => ({ item: s.item, when: `${s.day} ~${s.c.label}` })),
+      selloutDots: so.map(s => ({ left: Math.max(0, Math.min(100, (s.c.h - 7) / 12 * 100)) })),
+      selloutPeak: so.length ? '~' + clock(Math.floor(avgH) + ':' + Math.round((avgH % 1) * 60)).label : '–',
+      ...this.recordVals(),
+      ...this.todayVals(),
+      ...this.forecastVals(),
+      logFilters: [['all', 'All'], ['count', 'Counts'], ['approval', 'Approvals'], ['edit', 'Edits']].map(([k, label]) => ({ label, go: () => this.setState({ logType: k }), bg: logType === k ? '#0071E3' : 'transparent', fg: logType === k ? '#fff' : '#1D1D1F' })),
+      logRows: logs.filter(l => logType === 'all' || l.type === logType).map(l => ({ ...l, tag: TAG[l.type] || '•', tagBg: (TAG_COLOR[l.type] || TAG_COLOR.plan)[0], tagFg: (TAG_COLOR[l.type] || TAG_COLOR.plan)[1], ago: ago(l.at), time: l.at.toLocaleDateString('en-GB', { weekday: 'short' }) + ' ' + tClock(l.at) })),
+      wasteTotal: rm(total), wasteLast: rm(lastRm),
+      wasteChip: `${diff <= 0 ? '↓' : '↑'} ${rm(Math.abs(diff))}`, wasteChipBg: diff <= 0 ? '#248A3D' : '#FF3B30',
+      chartRef: this.chartRef,
+      planDateUpper: dateStr,
+      summary: `${rows.reduce((a, r) => a + r.bake, 0)} pieces · ${rows.length} items`,
+      statusLabel: approved ? 'Approved' : 'Pending',
+      statusDetail: approved
+        ? `approved by ${by}, ${at.toLocaleDateString('en-GB', { weekday: 'short' })} ${tClock(at)} · ` + (p.bake_list_sent ? 'bake list sent to the baker' : this.tg.baker.auto ? `bake list goes to the baker at ${clock(this.tg.baker.time).label}` : 'send the bake list from the Telegram page')
+        : 'waiting for you to approve it in Telegram',
+      statusBg: approved ? '#E8F3EA' : '#FFF4E5', statusDot: approved ? '#248A3D' : '#FF9F0A',
+      approvePlan: this.approvePlan, approved, approveLabel: approved ? `✓ Approved ${tClock(at)}` : 'Approve plan', approveBg: approved ? '#248A3D' : '#1D1D1F',
+      sendPlan: this.sendPlan, sending, sendLabel: sending ? 'Sending…' : 'Send to Telegram',
+      recalcPlan: this.recalcPlan, recalcing: !!this.state.recalcing, recalcLabel: this.state.recalcing ? '…' : '↻',
+      planRows: rows,
+      itemRows: (items || []).map((it, i) => {
+        const dr = (this.state.drafts || [])[i] || {};
+        const set = k => e => { const v = e.target.value; this.setState(s => { const d = (s.drafts || []).slice(); d[i] = { ...d[i], [k]: v }; return { drafts: d }; }); };
+        return { name: it.name || it.item, price: rm(it.price), cost: '~' + rm(it.cost), batch: it.usual_batch ?? it.batch,
+          priceRaw: dr.price ?? String(it.price), costRaw: dr.cost ?? String(it.cost), batchRaw: dr.batch ?? String(it.usual_batch ?? it.batch),
+          onprice: set('price'), oncost: set('cost'), onbatch: set('batch') };
+      }),
+      editingItems: !!this.state.editingItems, notEditingItems: !this.state.editingItems,
+      editItemsLabel: this.state.editingItems ? 'Save' : 'Edit',
+      toggleItems: this.toggleItems, cancelItems: () => this.setState({ editingItems: false, drafts: [] }),
+      toast
+    };
+  }
+}
+</script>
+</body>
+</html>
