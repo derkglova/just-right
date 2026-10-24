@@ -11,6 +11,7 @@ On approve, the bake list goes to the baker. Plans and every action are saved in
 the database (db.py), so they survive a restart and show up in the activity log.
 """
 import os
+import time
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
@@ -508,9 +509,18 @@ def run() -> None:
     except Exception as e:
         # The menus are a nice-to-have; never let them stop the bot from starting.
         print(f"Could not set command menus: {e}")
-    print("Telegram bot polling started.")
-    # skip_pending: ignore messages and taps sent while the bot was offline.
-    bot.infinity_polling(skip_pending=True)
+    # Keep the bot alive no matter what. During a Replit redeploy the old copy is still
+    # connected for a few seconds, and Telegram rejects the new one ("Conflict"); without
+    # this loop that error would silently stop the bot for good.
+    while True:
+        try:
+            print("Telegram bot polling started.", flush=True)
+            # skip_pending: ignore messages and taps sent while the bot was offline.
+            bot.infinity_polling(skip_pending=True)
+            return   # only returns when the bot is stopped on purpose
+        except Exception as e:
+            print(f"Telegram polling stopped ({e}); retrying in 5 seconds.", flush=True)
+            time.sleep(5)
 
 
 if __name__ == "__main__":

@@ -82,8 +82,7 @@ class TestDb(unittest.TestCase):
         items = [{"id": "croissant", "name": "Croissant", "cost": 2.0}]
         db.save_plan("2026-10-23", [rec("croissant", 44)])
         db.save_count("2026-10-23", "croissant", 44, 3)
-        day = db.daily_records(items, days=5)[0]
-        self.assertEqual(day["date"], "2026-10-23")
+        day = next(d for d in db.daily_records(items, days=5) if d["date"] == "2026-10-23")
         self.assertEqual(day["source"], "count")
         row = day["items"][0]
         self.assertEqual((row["planned"], row["baked"], row["sold"], row["leftover"]), (44, 44, 41, 3))
@@ -91,8 +90,13 @@ class TestDb(unittest.TestCase):
 
     def test_sample_days_are_labelled_sample(self):
         items = [{"id": "croissant", "name": "Croissant", "cost": 2.0}]
-        day = db.daily_records(items, days=1)[0]
+        day = next(d for d in db.daily_records(items, days=5) if d["counted"])
         self.assertEqual((day["source"], day["plan"]), ("sample", None))
+
+    def test_today_always_shown(self):
+        items = [{"id": "croissant", "name": "Croissant", "cost": 2.0}]
+        today = db.datetime.now(db.TZ).date().isoformat()
+        self.assertEqual(db.daily_records(items, days=5)[0]["date"], today)
 
     def test_log_newest_first(self):
         db.log("Derek", "manager", "Plan sent", "first")

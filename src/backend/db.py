@@ -212,6 +212,9 @@ def daily_records(items: list[dict], days: int = 30) -> list[dict]:
             "SELECT date FROM daily_sales UNION SELECT plan_date FROM plans ORDER BY 1 DESC LIMIT ?", (days,))]
         sales = [dict(r) for r in conn.execute(
             "SELECT * FROM daily_sales WHERE date >= ?", (dates[-1] if dates else "",))]
+    today_iso = datetime.now(TZ).date().isoformat()
+    if today_iso not in dates:
+        dates = sorted(dates + [today_iso], reverse=True)[:days]
 
     events = event_days()
     today = datetime.now(TZ).date().isoformat()
