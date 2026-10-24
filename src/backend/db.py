@@ -214,8 +214,12 @@ def daily_records(items: list[dict], days: int = 30) -> list[dict]:
             "SELECT * FROM daily_sales WHERE date >= ?", (dates[-1] if dates else "",))]
 
     events = event_days()
+    today = datetime.now(TZ).date().isoformat()
+    bake_list_sent_for = get_setting("bake_list_sent_for")
     records = []
     for day in dates:
+        if day > today and day != bake_list_sent_for:
+            continue   # a future plan only becomes a record once the baker has the list
         plan = {p["item_id"]: p for p in get_plan(day)}
         counted = {s["item_id"]: s for s in sales if s["date"] == day}
         rows = []

@@ -446,9 +446,14 @@
           <div style="background:#fff;border-radius:28px;padding:24px;font-size:15px;color:#707070">No records yet. They appear after the first plan or closing count.</div>
         </sc-if>
         <sc-for list="{{ records }}" as="d" hint-placeholder-count="4">
-          <div style="background:#fff;border-radius:28px;padding:20px 0 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="background:{{ d.cardBg }};border:1px solid {{ d.cardBorder }};border-radius:28px;padding:20px 0 14px;display:flex;flex-direction:column;gap:10px">
             <div style="padding:0 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-              <div style="font-weight:500;font-size:20px">{{ d.dateLabel }}</div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="font-weight:500;font-size:20px">{{ d.dateLabel }}</div>
+                <sc-if value="{{ d.dayTag }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:12px;font-weight:600;padding:5px 12px;border-radius:999px;background:{{ d.dayTagBg }};color:{{ d.dayTagFg }}">{{ d.dayTag }}</div>
+                </sc-if>
+              </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap">
                 <div style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:{{ d.planBg }}">{{ d.planLabel }}</div>
                 <div style="font-size:12px;padding:6px 12px;border-radius:999px;white-space:nowrap;background:{{ d.sourceBg }}">{{ d.sourceLabel }}</div>
@@ -815,7 +820,11 @@ class Component extends DCLogic {
     const records = (this.state.records || []).map(d => {
       const plan = d.plan, approved = plan && plan.status === 'approved';
       const dt = new Date(d.date + 'T00:00:00');
+      const now = new Date(), tom = new Date(); tom.setDate(now.getDate() + 1);
+      const dayTag = dt.toDateString() === now.toDateString() ? 'Today' : dt.toDateString() === tom.toDateString() ? 'Tomorrow' : null;
       return {
+        cardBg: dayTag === 'Today' ? '#E8EDF2' : '#fff', cardBorder: dayTag === 'Today' ? '#D3DCE5' : '#fff',
+        dayTag, dayTagBg: dayTag === 'Today' ? '#161616' : '#FCE6A4', dayTagFg: dayTag === 'Today' ? '#fff' : '#161616',
         dateLabel: isNaN(dt) ? d.date : dt.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }),
         planLabel: !plan ? 'No plan saved' : approved ? 'Approved by ' + (plan.approved_by || 'manager') : 'Plan pending',
         planBg: !plan ? '#F2F2F2' : approved ? '#DDEFD9' : '#FCE1EC',
