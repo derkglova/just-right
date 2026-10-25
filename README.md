@@ -23,7 +23,7 @@ An AI bake planner for small cafés and bakeries in Malaysia that tells the mana
 | Replit Project | https://replit.com/@linegidid/just-right |
 | Live Demo | https://just-right-linegidid.replit.app (dashboard) · Telegram bot: https://t.me/justright_bakery_bot |
 | RunPod Endpoint | Not used (no GPU workload) |
-| Slide Deck | TODO |
+| Slide Deck | [Just Right – Pitch Deck.pptx](submission/Just%20Right%20%E2%80%93%20Pitch%20Deck.pptx) |
 | Demo Video | TODO |
 
 ## Overview
@@ -158,6 +158,19 @@ cp .env.example .env            # then fill in your values
 python src/backend/main.py      # dashboard on http://localhost:8080 + Telegram bot
 ```
 
+#### Set up your own Telegram test bot
+The bot token is secret, and only one copy can run per bot, so use your own test bot:
+
+1. In Telegram, message **@BotFather**, send `/newbot` and copy the token into `TELEGRAM_TOKEN` in `.env`.
+2. Put any number in `MANAGER_TELEGRAM_ID` for now and run `python src/backend/main.py`.
+3. Send `/start` to your new bot. It replies with your Telegram ID.
+4. Put that ID in `MANAGER_TELEGRAM_ID`, `BAKER_TELEGRAM_ID` and `STAFF_TELEGRAM_IDS`, then restart.
+   With the same ID in all three, one person can try every role.
+5. Try the daily loop: open `http://localhost:8080`, go to **Telegram** and hold **Close shop**,
+   enter the leftovers in Telegram, approve the plan, and see the bake list arrive.
+
+The baker and staff must press **Start** in the bot once, or Telegram won't let the bot message them.
+
 Other useful commands:
 ```bash
 python scripts/generate_data.py  # regenerate the synthetic sales history
@@ -242,7 +255,7 @@ The problem, solution design and technical decisions (newsvendor rule, forecast 
 
 ## Submission Checklist
 - [x] Team name, domain and SDG track filled in
-- [ ] Slide deck link added
+- [x] Slide deck link added
 - [ ] Demo video link added
 - [x] Replit used, with proof of use in `submission/`
 - [x] RunPod not required (no GPU workload)
