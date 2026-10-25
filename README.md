@@ -24,7 +24,7 @@ An AI bake planner for small cafés and bakeries in Malaysia that tells the mana
 | Live Demo | https://just-right-linegidid.replit.app (dashboard) · Telegram bot: https://t.me/justright_bakery_bot |
 | RunPod Endpoint | Not used (no GPU workload) |
 | Slide Deck | [Just Right – Pitch Deck.pptx](submission/Just%20Right%20%E2%80%93%20Pitch%20Deck.pptx) |
-| Demo Video | TODO |
+| Demo Video | https://youtu.be/_cxwEx1uzOI |
 
 ## Overview
 
