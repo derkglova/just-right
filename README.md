@@ -256,12 +256,12 @@ The problem, solution design and technical decisions (newsvendor rule, forecast 
 ## Submission Checklist
 - [x] Team name, domain and SDG track filled in
 - [x] Slide deck link added
-- [ ] Demo video link added
+- [x] Demo video link added
 - [x] Replit used, with proof of use in `submission/`
 - [x] RunPod not required (no GPU workload)
 - [x] Preliminary submission completed (`SDC2026_Beginathon_Preliminary.pdf`)
 - [x] Technology declaration completed (`SDC2026_Beginathon_TechDeclaration.pdf`)
-- [ ] "How to Run" steps verified
+- [x] "How to Run" steps verified
 - [x] No API keys or secrets committed to the repository
 
 ## License
